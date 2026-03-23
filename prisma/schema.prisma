@@ -1,0 +1,176 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Family {
+  id            String    @id @default(cuid())
+  username      String    @unique
+  password      String
+  isVip         Boolean   @default(false)
+  vipExpiry     BigInt    @default(0) // Timestamp in ms
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  members       User[]
+  coupons       Coupon[]
+
+  @@map("families")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  avatar        String?   @db.Text
+  points        Int       @default(0)
+  checkInDays   Int       @default(0)
+  role          String    @default("secondary")
+  unlockedPets  String?   @db.Text // JSON list of typeIds
+  familyId      String
+  family        Family    @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  habits        Habit[]
+  records       HabitRecord[]
+  learningPlans LearningPlan[]
+  pet           Pet?
+  wishes        Wish[]
+  medals        Medal[]
+  history       History[]
+
+  @@map("users")
+}
+
+model Coupon {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  days        Int       @default(31)
+  used        Boolean   @default(false)
+  usedByFamilyId String?
+  family      Family?   @relation(fields: [usedByFamilyId], references: [id])
+  usedAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@map("coupons")
+}
+
+model Pet {
+  id              String    @id @default(cuid())
+  name            String
+  typeId          String
+  level           Int       @default(1)
+  intimacy        Int       @default(0)
+  fullness        Int       @default(80)
+  cleanliness     Int       @default(90)
+  mood            Int       @default(85)
+  lastInteraction DateTime  @default(now())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("pets")
+}
+
+model Wish {
+  id          String    @id @default(cuid())
+  title       String
+  icon        String
+  cost        Int
+  category    String
+  repeatType  String    // SINGLE, MULTIPLE
+  count       Int       @default(0)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@map("wishes")
+}
+
+model Medal {
+  id          String    @id @default(cuid())
+  title       String
+  icon        String
+  desc        String?   @db.Text
+  target      Int
+  current     Int       @default(0)
+  unlocked    Boolean   @default(false)
+  reward      Int       @default(0)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("medals")
+}
+
+model History {
+  id        String    @id @default(cuid())
+  type      String    // GAIN, LOSS
+  amount    Int
+  reason    String
+  date      DateTime  @default(now())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("history")
+}
+
+model Habit {
+  id          String    @id @default(cuid())
+  title       String
+  icon        String
+  color       String
+  points      Int
+  type        String    // daily, daily_multiple
+  maxTimes    Int       @default(1)
+  category    String
+  duration    Int       @default(0)
+  desc        String?   @db.Text
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  records     HabitRecord[]
+
+  @@map("habits")
+}
+
+model HabitRecord {
+  id            String    @id @default(cuid())
+  habitId       String
+  habit         Habit     @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  date          String    // YYYY-MM-DD
+  timestamp     DateTime  @default(now())
+  pointsChange  Int
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("habit_records")
+}
+
+model LearningPlan {
+  id              String    @id @default(cuid())
+  title           String
+  date            String    // YYYY-MM-DD
+  timeType        String    // range, duration
+  startTime       String?
+  endTime         String?
+  duration        Int?
+  completed       Boolean   @default(false)
+  category        String
+  reward          Int       @default(0)
+  repeatType      String?   // EBBINGHAUS, etc.
+  ebbinghausMode  String?
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("learning_plans")
+}
