@@ -20,6 +20,21 @@ export function AppProvider({ children }) {
   });
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [gender, setGenderState] = useState('male'); // 'male' | 'female'
+
+  // Persist gender choice
+  const setGender = (g) => {
+    setGenderState(g);
+    if (typeof window !== 'undefined') localStorage.setItem('bj_gender', g);
+  };
+
+  // Load gender from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bj_gender');
+      if (saved === 'male' || saved === 'female') setGenderState(saved);
+    }
+  }, []);
 
   const isVipActive = useCallback(() => {
     if (!family) return false;
@@ -262,7 +277,9 @@ export function AppProvider({ children }) {
       switchMember,
       updateStats,
       isInitialized,
-      isVipActive: isVipActive()
+      isVipActive: isVipActive(),
+      gender,
+      setGender,
     }}>
       {children}
     </AppContext.Provider>

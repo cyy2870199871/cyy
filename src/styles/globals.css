@@ -1,6 +1,6 @@
 /* Global Design System */
 :root {
-  /* Colors */
+  /* Colors — default: male/blue */
   --primary: #3B82F6;
   --primary-dark: #2563EB;
   --primary-light: #EFF6FF;
@@ -9,6 +9,12 @@
   --success: #10B981;
   --danger: #EF4444;
   
+  /* Gender theme tokens (overridden by GenderThemeInjector) */
+  --gender-gradient: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  --gender-shadow: rgba(37, 99, 235, 0.2);
+  --gender-soft: #EFF6FF;
+  --gender-text: #1d4ed8;
+
   /* Neutral */
   --bg-main: #F8FAFC;
   --bg-card: #FFFFFF;
@@ -26,6 +32,11 @@
   --radius: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
+}
+
+/* Smooth transition when gender theme switches */
+body {
+  transition: background-color 0.4s ease;
 }
 
 * {

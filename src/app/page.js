@@ -6,6 +6,7 @@ import QuickActions from "@/components/Dashboard/QuickActions";
 import MainTabs from "@/components/Dashboard/MainTabs";
 import PetHouse from "@/components/Dashboard/PetHouse";
 import InstallPrompt from "@/components/Dashboard/InstallPrompt";
+import CheckInHeatmap from "@/components/Dashboard/CheckInHeatmap";
 
 export default function DashboardPage() {
   return (
@@ -20,6 +21,8 @@ export default function DashboardPage() {
           <div className="divider" />
           <PetHouse />
         </div>
+
+        <CheckInHeatmap />
 
         <MainTabs />
       </div>
