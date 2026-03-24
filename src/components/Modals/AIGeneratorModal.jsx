@@ -5,14 +5,15 @@ import { X, Sparkles, Loader2, ArrowRightCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLearningPlan } from '@/hooks/useLearningPlan';
 
-export default function AIGeneratorModal({ isOpen, onClose }) {
-  const [prompt, setPrompt] = useState('');
+export default function AIGeneratorModal({ isOpen, onClose, initialPrompt = '' }) {
+  const [prompt, setPrompt] = useState(initialPrompt);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedTasks, setGeneratedTasks] = useState([]);
   const [streamedText, setStreamedText] = useState('');
   const [dots, setDots] = useState('');
+  const [importStatus, setImportStatus] = useState('idle'); // idle | importing | success | error
   
-  const { addPlan } = useLearningPlan();
+  const { addPlan, addPlans } = useLearningPlan();
 
   useEffect(() => {
     if (isOpen) {
@@ -35,8 +36,10 @@ export default function AIGeneratorModal({ isOpen, onClose }) {
       setStreamedText('');
       setIsGenerating(false);
       setDots('');
+    } else if (initialPrompt) {
+      setPrompt(initialPrompt);
     }
-  }, [isOpen]);
+  }, [isOpen, initialPrompt]);
 
   useEffect(() => {
     let interval;
@@ -49,43 +52,83 @@ export default function AIGeneratorModal({ isOpen, onClose }) {
   }, [isGenerating]);
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) return;
+    if (!prompt.trim() || isGenerating) return;
+    
     setIsGenerating(true);
     setGeneratedTasks([]);
-    setStreamedText('正在接入大模型引擎...\n');
+    setStreamedText('🔍 正在接入大模型引擎...\n');
     
-    setTimeout(() => {
-      setStreamedText(prev => prev + `正在分析目标：${prompt.substring(0, 10)}...\n`);
-      
-      setTimeout(() => {
-        setStreamedText(prev => prev + '正在为您拆解合理的学习步骤和阶段...\n');
-        
-        setTimeout(() => {
-          const keyword = prompt.length > 5 ? prompt.substring(0, 10) : prompt;
-          setGeneratedTasks([
-            { title: `了解「${keyword}」的背景与核心理论`, category: '理论' },
-            { title: '搜集与统筹必要的学习工具和资料', category: '准备' },
-            { title: '开启高强度的刻意练习与实战演练', category: '执行' },
-            { title: '完成阶段性小测试，查漏补缺', category: '自测' },
-            { title: '输出总结报告，梳理专属的思维导图', category: '复盘' }
-          ]);
-          setIsGenerating(false);
-        }, 1500);
-      }, 1000);
-    }, 1000);
+    // Simulating a more robust streaming experience without deep nesting
+    const steps = [
+      { text: `🎯 正在分析您的目标：${prompt.substring(0, 15)}...`, delay: 600 },
+      { text: '🧠 正在为您拆解合理的学习步骤和阶段...', delay: 800 },
+      { text: '✨ 计划已准备就绪！', delay: 400 }
+    ];
+
+    let currentLog = '🔍 正在接入大模型引擎...\n';
+    
+    for (const step of steps) {
+      await new Promise(resolve => setTimeout(resolve, step.delay));
+      currentLog += step.text + '\n';
+      setStreamedText(currentLog);
+    }
+
+    const keyword = prompt.length > 5 ? prompt.substring(0, 10).trim() : prompt.trim();
+    const isCoding = prompt.toLowerCase().includes('js') || prompt.includes('代码') || prompt.includes('开发');
+    const isFitness = prompt.includes('健身') || prompt.includes('减肥') || prompt.includes('运动');
+    
+    let tasks = [];
+    if (isCoding) {
+      tasks = [
+        { title: `搭建「${keyword}」的基础开发环境`, category: '准备' },
+        { title: '掌握核心语法与基本组件结构', category: '理论' },
+        { title: '动手实现一个小型的 Demo 项目', category: '实践' },
+        { title: '深入阅读官方文档并进行性能优化', category: '进阶' },
+        { title: '完成项目部署并分享心得', category: '总结' }
+      ];
+    } else if (isFitness) {
+      tasks = [
+        { title: `制定「${keyword}」的专属运动计划`, category: '准备' },
+        { title: '了解运动姿势要领及饮食建议', category: '理论' },
+        { title: '坚持第一个阶段的身体对抗练习', category: '执行' },
+        { title: '记录身体各项指标的变化数据', category: '记录' },
+        { title: '根据身体反馈调整下一阶段强度', category: '复盘' }
+      ];
+    } else {
+      tasks = [
+        { title: `明确「${keyword}」的核心目标与路径`, category: '计划' },
+        { title: '搜集与学习必要的专业知识', category: '学习' },
+        { title: '开启第一阶段的模拟/实战练习', category: '执行' },
+        { title: '通过自测检查知识掌握程度', category: '评估' },
+        { title: '完成并输出第一份正式成果', category: '产出' }
+      ];
+    }
+    
+    setGeneratedTasks(tasks);
+    setIsGenerating(false);
   };
 
   const handleImport = async () => {
-    // Import tasks sequentially
-    for (const task of generatedTasks) {
-      await addPlan({
-        title: task.title,
-        category: task.category,
-        importance: 'medium',
-        date: new Date().toISOString()
-      });
+    if (importStatus === 'importing') return;
+    
+    setImportStatus('importing');
+    const today = new Date().toISOString().split('T')[0];
+    const plansToImport = generatedTasks.map(task => ({
+      title: task.title,
+      category: task.category,
+      importance: 'medium',
+      date: today
+    }));
+
+    try {
+      await addPlans(plansToImport);
+      setImportStatus('success');
+      // Auto close after 1s on success
+      setTimeout(() => onClose(), 1200);
+    } catch (error) {
+      console.error('Import error:', error);
+      setImportStatus('error');
     }
-    onClose();
   };
 
   if (!isOpen) return null;
@@ -155,8 +198,15 @@ export default function AIGeneratorModal({ isOpen, onClose }) {
                   </motion.div>
                 ))}
               </div>
-              <button className="btn-import" onClick={handleImport}>
-                ✨ 完美！一键导入到我的计划 <ArrowRightCircle size={18} style={{ marginLeft: '4px' }} />
+              <button 
+                className={`btn-import ${importStatus === 'importing' ? 'disabled' : ''}`} 
+                onClick={handleImport}
+                disabled={importStatus === 'importing'}
+              >
+                {importStatus === 'idle' && <>✨ 完美！一键导入到我的计划 <ArrowRightCircle size={18} style={{ marginLeft: '4px' }} /></>}
+                {importStatus === 'importing' && <>⏳ 正在同步到清单...</>}
+                {importStatus === 'success' && <>✅ 导入成功！即将关闭...</>}
+                {importStatus === 'error' && <>❌ 导入失败，请重试</>}
               </button>
             </motion.div>
           )}

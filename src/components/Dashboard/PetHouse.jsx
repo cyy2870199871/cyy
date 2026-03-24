@@ -34,7 +34,17 @@ export default function PetHouse() {
             transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
             className="pet-avatar-box"
           >
-            <img src={currentType.image} alt={currentType.name} className="pet-img" />
+            <img 
+              src={currentType.image || '/pets/corgi.png'} 
+              alt={currentType.name} 
+              className="pet-img" 
+              style={{ display: 'block' }}
+              onError={(e) => { 
+                if (e.target.src !== window.location.origin + '/pets/corgi.png') {
+                  e.target.src = '/pets/corgi.png'; 
+                }
+              }}
+            />
           </motion.div>
 
           <div className="pet-stats">

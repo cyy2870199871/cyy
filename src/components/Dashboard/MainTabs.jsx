@@ -20,13 +20,13 @@ export default function MainTabs() {
     <div className="main-tabs-container card">
       <div className="tab-header">
         <div className="tabs">
-          <button 
+          <button
             className={`tab-btn ${activeTab === 'learning' ? 'active' : ''}`}
             onClick={() => setActiveTab('learning')}
           >
             学习计划
           </button>
-          <button 
+          <button
             className={`tab-btn ${activeTab === 'habits' ? 'active' : ''}`}
             onClick={() => setActiveTab('habits')}
           >
@@ -37,8 +37,8 @@ export default function MainTabs() {
         <div className="tab-actions">
           {activeTab === 'learning' ? (
             <>
-              <button className="action-icon-btn primary"><Sparkles size={14} /> AI创建</button>
-              <button 
+              {/*<button className="action-icon-btn primary"><Sparkles size={14} /> AI创建</button>*/}
+              <button
                 className="action-icon-btn secondary"
                 onClick={() => router.push('/plans/batch-add')}
               >
@@ -72,10 +72,10 @@ export default function MainTabs() {
         </div>
       </div>
 
-      <TaskDetailModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onAdd={addPlan} 
+      <TaskDetailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAdd={addPlan}
       />
 
       <style jsx>{`

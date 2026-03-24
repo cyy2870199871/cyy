@@ -22,10 +22,10 @@ export default function PlanList() {
         confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
         confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
       }, 250);
-      
+
       setTimeout(() => clearInterval(interval), 600); // Stop after a brief burst
     }
-    
+
     // Toggle state
     togglePlan(plan.id);
   };
@@ -35,9 +35,9 @@ export default function PlanList() {
       <div className="list-header">
         <h3>我的计划</h3>
         <div className="header-actions">
-          <button className="ai-magic-btn" onClick={() => setShowAIModal(true)}>
-            <Sparkles size={14} /> AI 生成
-          </button>
+          {/*<button className="ai-magic-btn" onClick={() => setShowAIModal(true)}>*/}
+          {/*  <Sparkles size={14} /> AI 生成*/}
+          {/*</button>*/}
           <button className="share-btn"><Share2 size={16} /> 分享</button>
         </div>
       </div>
@@ -45,13 +45,13 @@ export default function PlanList() {
       <div className="list-content">
         <AnimatePresence>
           {plans.map(plan => (
-            <motion.div 
-              key={plan.id} 
+            <motion.div
+              key={plan.id}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               whileTap={{ scale: 0.98 }}
-              className={`plan-item ${plan.completed ? 'completed' : ''}`} 
+              className={`plan-item ${plan.completed ? 'completed' : ''}`}
               onClick={() => handleToggle(plan)}
             >
               <div className={`status-indicator ${plan.completed ? 'active' : ''}`}>
@@ -61,8 +61,8 @@ export default function PlanList() {
                 <span className="category">[{plan.category}]</span>
                 <span className="title">{plan.title}</span>
               </div>
-              <button 
-                className="delete-btn" 
+              <button
+                className="delete-btn"
                 onClick={(e) => { e.stopPropagation(); deletePlan(plan.id); }}
                 title="删除计划"
               >

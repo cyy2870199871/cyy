@@ -53,7 +53,7 @@ export default function CalendarStrip() {
           <span className="current-month">{currentWeekMonth()}</span>
         </div>
         <div className="strip-nav">
-          <button className="nav-btn sub-btn"><span className="dot">◎</span> 可补打卡</button>
+          {/*<button className="nav-btn sub-btn"><span className="dot">◎</span> 可补打卡</button>*/}
           <button className="nav-btn today" onClick={() => setSelectedDate(today)}>今天</button>
           <div className="nav-group">
             <button className="nav-btn icon-only" onClick={handlePrevDay} title="前一天"><ChevronLeft size={16} /></button>
@@ -63,8 +63,8 @@ export default function CalendarStrip() {
             <CalendarIcon size={16} />
           </button>
           {/* Hidden date input for native picker */}
-          <input 
-            type="date" 
+          <input
+            type="date"
             ref={dateInputRef}
             style={{ position: 'absolute', opacity: 0, width: 0, height: 0, pointerEvents: 'none' }}
             value={selectedDate}
@@ -79,8 +79,8 @@ export default function CalendarStrip() {
           const isToday = today === day.fullDate;
 
           return (
-            <button 
-              key={i} 
+            <button
+              key={i}
               className={`day-item ${isSelected ? 'active' : ''} ${isToday ? 'is-today' : ''}`}
               onClick={() => handleDateClick(day.fullDate)}
             >

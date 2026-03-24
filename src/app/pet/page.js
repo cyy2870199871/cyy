@@ -124,7 +124,16 @@ export default function PetPage() {
                 transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
               >
                 <div className="pet-img-stage">
-                  <img src={currentType.image} alt={currentType.name} className="hero-pet-image" />
+                  <img 
+                    src={currentType.image || '/pets/corgi.png'} 
+                    alt={currentType.name} 
+                    className="hero-pet-image" 
+                    onError={(e) => { 
+                      if (e.target.src !== window.location.origin + '/pets/corgi.png') {
+                        e.target.src = '/pets/corgi.png'; 
+                      }
+                    }}
+                  />
                 </div>
               </motion.div>
             </div>
@@ -212,20 +221,32 @@ export default function PetPage() {
             
             <div className="pets-vertical-list">
               {ALL_PET_TYPES.map(type => {
-                const isUnlocked = myPets.includes(type.id);
                 const isActive = pet.typeId === type.id;
+                const isUnlocked = myPets.includes(type.id) || isActive;
 
                 return (
                   <div key={type.id} className={`pet-list-item ${isActive ? 'active' : ''} ${!isUnlocked ? 'locked-item' : ''}`}>
                     <div className="item-avatar-box">
-                      <img src={type.image} alt={type.name} className={`item-pet-img ${!isUnlocked ? 'gray-avatar' : ''}`} />
+                      <img 
+                        src={type.image || '/pets/corgi.png'} 
+                        alt={type.name} 
+                        className={`item-pet-img ${!isUnlocked ? 'gray-avatar' : ''}`} 
+                        onError={(e) => { 
+                          if (e.target.src !== window.location.origin + '/pets/corgi.png') {
+                            e.target.src = '/pets/corgi.png'; 
+                          }
+                        }}
+                      />
                       {!isUnlocked && (
                         <div className="lock-overlay"><Lock size={12} strokeWidth={3} color="white" /></div>
                       )}
                     </div>
                     
                     <div className="item-info">
-                      <h4>{type.name}</h4>
+                      <div className="item-name-row">
+                        <h4>{type.name}</h4>
+                        <span className={`rarity-badge ${type.rarity}`}>{type.rarity.toUpperCase()}</span>
+                      </div>
                       <p>{type.desc}</p>
                     </div>
 
@@ -387,6 +408,20 @@ export default function PetPage() {
         .active-status { font-size: 0.8rem; font-weight: 800; color: #10b981; padding: 0.4rem 0.8rem; background: #dcfce7; border-radius: 999px; }
         .btn-switch { background: white; color: #3b82f6; border: 2px solid #3b82f6; border-radius: 999px; padding: 0.4rem 1rem; font-size: 0.8rem; font-weight: 800; cursor: pointer; }
         .btn-buy { background: #f59e0b; color: white; border: none; border-radius: 999px; padding: 0.4rem 1rem; font-size: 0.8rem; font-weight: 800; cursor: pointer; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2); }
+
+        .item-name-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem; }
+        .rarity-badge { font-size: 0.6rem; padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 900; letter-spacing: 0.5px; }
+        .rarity-badge.common { background: #f1f5f9; color: #64748b; }
+        .rarity-badge.rare { background: #dcfce7; color: #16a34a; }
+        .rarity-badge.epic { background: #e0e7ff; color: #4338ca; }
+        .rarity-badge.legendary { background: #fef3c7; color: #b45309; }
+        .rarity-badge.mythic { background: #fae8ff; color: #a21caf; border: 1px solid #d946ef; animation: pulse-shadow 2s infinite; }
+
+        @keyframes pulse-shadow {
+          0% { box-shadow: 0 0 0 0 rgba(217, 70, 239, 0.4); }
+          70% { box-shadow: 0 0 0 6px rgba(217, 70, 239, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(217, 70, 239, 0); }
+        }
 
         @media (max-width: 900px) {
           .pet-main-layout { grid-template-columns: 1fr; }

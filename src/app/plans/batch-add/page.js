@@ -2,14 +2,14 @@
 
 import { useApp } from "@/hooks/useAppContext";
 import { useLearningPlan } from "@/hooks/useLearningPlan";
-import { 
-  ChevronLeft, 
-  Trash2, 
-  Plus, 
-  Sparkles, 
-  Clock, 
-  Calendar, 
-  Repeat, 
+import {
+  ChevronLeft,
+  Trash2,
+  Plus,
+  Sparkles,
+  Clock,
+  Calendar,
+  Repeat,
   Star,
   Info,
   X
@@ -23,7 +23,7 @@ export default function BatchAddPlansPage() {
   const router = useRouter();
   const { selectedDate } = useApp();
   const { addPlans } = useLearningPlan();
-  
+
   const [inputText, setInputText] = useState("");
   const [startDate, setStartDate] = useState(selectedDate || new Date().toISOString().split('T')[0]);
   const [repeatType, setRepeatType] = useState("NONE");
@@ -83,7 +83,7 @@ export default function BatchAddPlansPage() {
   const removeTask = (id) => {
     // This is tricky because parsedTasks is derived from inputText
     // To support removing, we'd need to modify inputText or have a local "hidden" list
-    // For now, let's just implement it by filtering if possible, but real replication 
+    // For now, let's just implement it by filtering if possible, but real replication
     // might require a more complex state.
     // Simpler approach for "batch add": the textarea is the source of truth.
   };
@@ -107,10 +107,10 @@ export default function BatchAddPlansPage() {
                 <span className="title">任务列表</span>
                 <button className="ai-btn">
                   <Sparkles size={16} />
-                  <span>AI 智能解析</span>
+                  {/*<span>AI 智能解析</span>*/}
                 </button>
               </div>
-              <textarea 
+              <textarea
                 placeholder="请输入任务列表，例如：&#10;语文&#10;1. 背单词&#10;2. 读课文&#10;数学&#10;1. 做练习题"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
@@ -127,9 +127,9 @@ export default function BatchAddPlansPage() {
               <div className="settings-grid">
                 <div className="setting-item">
                   <label><Calendar size={16} /> 起始日期</label>
-                  <input 
-                    type="date" 
-                    value={startDate} 
+                  <input
+                    type="date"
+                    value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
                   />
                 </div>
@@ -156,24 +156,24 @@ export default function BatchAddPlansPage() {
                 )}
                 <div className="setting-item">
                   <label><Clock size={16} /> 默认时长 (分钟)</label>
-                  <input 
-                    type="number" 
-                    value={duration} 
+                  <input
+                    type="number"
+                    value={duration}
                     onChange={(e) => setDuration(Number(e.target.value))}
                   />
                 </div>
                 <div className="setting-item">
                   <label><Star size={16} /> 完成奖励 (积分)</label>
                   <div className="reward-input-wrap">
-                    <input 
-                      type="number" 
-                      value={reward} 
+                    <input
+                      type="number"
+                      value={reward}
                       onChange={(e) => setReward(Number(e.target.value))}
                     />
                     <label className="switch-label">
-                      <input 
-                        type="checkbox" 
-                        checked={isCustomReward} 
+                      <input
+                        type="checkbox"
+                        checked={isCustomReward}
                         onChange={(e) => setIsCustomReward(e.target.checked)}
                       />
                       <span>自定义</span>
@@ -197,7 +197,7 @@ export default function BatchAddPlansPage() {
                   </div>
                 ) : (
                   parsedTasks.map((task, idx) => (
-                    <motion.div 
+                    <motion.div
                       key={task.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -240,8 +240,8 @@ export default function BatchAddPlansPage() {
           </div>
           <div className="btn-group">
             <button className="btn-cancel" onClick={() => router.back()}>取消</button>
-            <button 
-              className="btn-save" 
+            <button
+              className="btn-save"
               disabled={parsedTasks.length === 0}
               onClick={handleSave}
             >

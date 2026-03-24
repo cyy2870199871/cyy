@@ -22,7 +22,7 @@ export async function GET(request) {
 
     return NextResponse.json({ 
       pet, 
-      unlockedPets: user?.unlockedPets ? JSON.parse(user.unlockedPets) : ['teddy'] 
+      unlockedPets: user?.unlockedPets ? JSON.parse(user.unlockedPets) : ['corgi'] 
     });
   } catch (error) {
     console.error('Fetch pet error:', error);
