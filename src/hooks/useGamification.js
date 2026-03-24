@@ -6,14 +6,12 @@ import { useApp } from './useAppContext';
 const PetContext = createContext();
 
 export const ALL_PET_TYPES = [
-  { id: 'teddy', name: '泰迪', icon: '🐶', rarity: 'common', cost: 0, desc: '活泼好动的小淘气' },
-  { id: 'bichon', name: '比熊', icon: '🐩', rarity: 'common', cost: 100, desc: '像棉花糖一样软糯' },
-  { id: 'husky', name: '哈士奇', icon: '🐺', rarity: 'rare', cost: 300, desc: '英俊潇潇的二哈' },
-  { id: 'calico', name: '三花猫', icon: '🐱', rarity: 'rare', cost: 250, desc: '安静优雅的伙伴' },
-  { id: 'devil', name: '小恶魔', icon: '😈', rarity: 'epic', cost: 800, desc: '有点调皮的神秘伙伴' },
-  { id: 'phoenix', name: '烈焰凤凰', icon: '🦜', rarity: 'legendary', cost: 1500, desc: '浴火重生的神圣之鸟' },
-  { id: 'mecha', name: '机械战甲', icon: '🤖', rarity: 'legendary', cost: 2000, desc: '充满未来科技感的守护者' },
-  { id: 'dragon', name: '翡翠神龙', icon: '🐉', rarity: 'mythical', cost: 5000, desc: '掌控自然之力的上古神龙' },
+  { id: 'corgi', name: '柯基', image: '/pets/corgi.png', rarity: 'common', cost: 0, desc: '活泼好动的小短腿' },
+  { id: 'shiba', name: '柴犬', image: '/pets/shiba.png', rarity: 'common', cost: 100, desc: '呆萌治愈的微笑天使' },
+  { id: 'golden', name: '金毛大暖男', image: '/pets/golden.png', rarity: 'rare', cost: 300, desc: '阳光温柔的居家伴侣' },
+  { id: 'rabbit', name: '垂耳兔', image: '/pets/rabbit.png', rarity: 'rare', cost: 250, desc: '毛茸茸的乖巧甜心' },
+  { id: 'hamster', name: '贪吃仓鼠', image: '/pets/hamster.png', rarity: 'epic', cost: 800, desc: '脸颊塞满瓜子的胖墩' },
+  { id: 'ragdoll', name: '布偶猫', image: '/pets/ragdoll.png', rarity: 'legendary', cost: 1500, desc: '拥有星辰大海般双眼的仙女' },
 ];
 
 export function PetProvider({ children }) {
@@ -21,7 +19,7 @@ export function PetProvider({ children }) {
   
   const initialPet = {
     name: '小汤圆Buddy',
-    typeId: 'teddy',
+    typeId: 'corgi',
     level: 1,
     intimacy: 0,
     fullness: 80,
@@ -30,7 +28,7 @@ export function PetProvider({ children }) {
   };
 
   const [pet, setPet] = useState(null);
-  const [myPets, setMyPets] = useState(['teddy']); 
+  const [myPets, setMyPets] = useState(['corgi']); 
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Load from API and Migration
@@ -82,6 +80,7 @@ export function PetProvider({ children }) {
   }, [user?.id, appInitialized]);
 
   const levelName = (lvl) => {
+    if (lvl >= 5) return '超默契';
     if (lvl >= 4) return '最佳伙伴';
     if (lvl >= 3) return '好伙伴';
     if (lvl >= 2) return '好朋友';
@@ -130,7 +129,8 @@ export function PetProvider({ children }) {
     };
     
     // Level calculation
-    if (newPet.intimacy >= 300) newPet.level = 4;
+    if (newPet.intimacy >= 700) newPet.level = 5;
+    else if (newPet.intimacy >= 300) newPet.level = 4;
     else if (newPet.intimacy >= 150) newPet.level = 3;
     else if (newPet.intimacy >= 50) newPet.level = 2;
     
