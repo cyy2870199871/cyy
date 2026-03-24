@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Check, Calendar, Clock, Paperclip, Zap, Repeat, Info } from 'lucide-react';
 import { EBBINGHAUS_MODES, getEbbinghausDates } from '@/utils/ebbinghaus';
 
@@ -19,19 +20,44 @@ export default function TaskDetailModal({ isOpen, onClose, onAdd }) {
     ebbinghausMode: 'STANDARD',
     attachments: []
   });
+  const [mounted, setMounted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  if (!isOpen || !mounted) return null;
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onAdd(formData);
-    onClose();
-    // Reset
-    setFormData({
-      title: '', category: '学习', reward: 10, date: new Date().toISOString().split('T')[0],
-      timeType: 'range', startTime: '09:00', endTime: '10:00', duration: 30,
-      repeatType: 'NONE', ebbinghausMode: 'STANDARD', attachments: []
-    });
+    setIsSubmitting(true);
+    try {
+      await onAdd(formData);
+      onClose();
+      // Reset
+      setFormData({
+        title: '', category: '学习', reward: 10, date: new Date().toISOString().split('T')[0],
+        timeType: 'range', startTime: '09:00', endTime: '10:00', duration: 30,
+        repeatType: 'NONE', ebbinghausMode: 'STANDARD', attachments: []
+      });
+    } catch (error) {
+      console.error(error);
+      alert('保存失败，请重试');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleFileSimulate = () => {
@@ -43,7 +69,7 @@ export default function TaskDetailModal({ isOpen, onClose, onAdd }) {
     setFormData({ ...formData, attachments: [...formData.attachments, mockFile] });
   };
 
-  return (
+  const modalContent = (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content card" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
@@ -174,9 +200,9 @@ export default function TaskDetailModal({ isOpen, onClose, onAdd }) {
           </div>
 
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>取消</button>
-            <button type="submit" className="btn btn-primary submit-btn">
-              保存计划
+            <button type="button" className="btn btn-secondary" disabled={isSubmitting} onClick={onClose}>取消</button>
+            <button type="submit" className="btn btn-primary submit-btn" disabled={isSubmitting}>
+              {isSubmitting ? '保存中...' : '保存计划'}
             </button>
           </div>
         </form>
@@ -242,13 +268,17 @@ export default function TaskDetailModal({ isOpen, onClose, onAdd }) {
         .modal-footer { padding: 1rem 1.5rem 1.5rem; display: flex; gap: 1rem; border-top: 1px solid #f1f5f9; }
         .btn { flex: 1; padding: 0.8rem; border-radius: 14px; font-size: 0.9rem; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; }
         .btn-secondary { background: #f1f5f9; color: #475569; }
-        .btn-secondary:hover { background: #e2e8f0; }
+        .btn-secondary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-secondary:not(:disabled):hover { background: #e2e8f0; }
         .btn-primary { background: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4); }
+        .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; }
+        .btn-primary:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4); }
 
         .animate-in { animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

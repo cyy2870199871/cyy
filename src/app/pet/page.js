@@ -194,17 +194,15 @@ export default function PetPage() {
               const isActive = pet.typeId === type.id;
 
               return (
-                <div key={type.id} className={`pet-type-card ${isActive ? 'active' : ''}`}>
+                <div key={type.id} className={`pet-type-card ${isActive ? 'active' : ''} ${!isUnlocked ? 'locked-card' : ''}`}>
                   <div className="type-icon-wrap">
-                    <span className="type-icon">{type.icon}</span>
-                    <div className="mini-rarity-tag" style={{ color: rarityConfig[type.rarity].color }}>
-                      {rarityConfig[type.rarity].label}
+                    <span className={`type-icon ${!isUnlocked ? 'gray-icon' : ''}`}>{type.icon}</span>
+                    <div className={`unlock-status ${isUnlocked ? 'unlocked' : 'locked'}`}>
+                      {isUnlocked ? <Check size={12} strokeWidth={3} /> : <Lock size={12} strokeWidth={3} />}
                     </div>
-                    {isUnlocked ? (
-                      <div className="unlock-status unlocked"><Check size={8} /></div>
-                    ) : (
-                      <div className="unlock-status locked"><Lock size={8} /></div>
-                    )}
+                  </div>
+                  <div className="mini-rarity-tag" style={{ color: rarityConfig[type.rarity].color }}>
+                    {rarityConfig[type.rarity].label}
                   </div>
                   <h4>{type.name}</h4>
                   <p className="price">{isUnlocked ? '已领养' : `${type.cost} ⭐`}</p>
@@ -264,9 +262,14 @@ export default function PetPage() {
         
         .pet-type-card { background: #F8FAFC; border: 2px solid transparent; border-radius: 20px; padding: 1.5rem; text-align: center; transition: 0.2s; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between; min-height: 240px; }
         .pet-type-card.active { border-color: #3b82f6; background: #eff6ff; }
-        .type-icon { font-size: 3.5rem; display: block; margin: 0 auto 0.5rem; }
-        .unlock-status { position: absolute; bottom: 0; right: 0; background: #10b981; color: white; padding: 4px; border-radius: 50%; border: 2px solid white; }
-        .locked { background: #94a3b8; }
+        .pet-type-card.locked-card { background: #f8fafc; border-color: transparent; }
+        
+        .type-icon-wrap { position: relative; display: inline-flex; justify-content: center; align-items: center; margin-bottom: 0.5rem; }
+        .type-icon { font-size: 3.5rem; display: block; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05)); transition: all 0.3s; }
+        .gray-icon { filter: grayscale(1) opacity(0.6) drop-shadow(0 2px 4px rgba(0,0,0,0.05)); }
+        
+        .unlock-status { position: absolute; bottom: 0; right: -5px; background: #10b981; color: white; padding: 6px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .unlock-status.locked { background: #94a3b8; }
         
         .adopt-btn { margin-top: 1rem; width: 100%; border: none; padding: 0.6rem; border-radius: 10px; font-weight: 850; font-size: 0.8rem; cursor: pointer; }
         .buy { background: #3b82f6; color: white; }

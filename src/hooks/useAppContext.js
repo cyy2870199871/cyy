@@ -154,7 +154,13 @@ export function AppProvider({ children }) {
     }
   }, [currentMemberId, stats, isInitialized]);
 
-  const currentUser = members.find(m => m.id === currentMemberId) || members[0] || {};
+  // Inject default avatar dynamically for rendering
+  const processedMembers = members.map(m => ({
+    ...m,
+    avatar: m.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${m.name || 'User'}`
+  }));
+
+  const currentUser = processedMembers.find(m => m.id === currentMemberId) || processedMembers[0] || {};
 
   const addPoints = async (amount) => {
     if (!currentMemberId) return;
@@ -239,7 +245,7 @@ export function AppProvider({ children }) {
   return (
     <AppContext.Provider value={{ 
       user: currentUser, 
-      members, 
+      members: processedMembers, 
       family,
       currentMemberId,
       stats,

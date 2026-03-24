@@ -1,10 +1,35 @@
 "use client";
 
 import { Smartphone, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function InstallPrompt() {
   const [visible, setVisible] = useState(true);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      // Prevent browser default prompt
+      e.preventDefault();
+      // Stash the event so it can be triggered later.
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) {
+      alert('您的浏览器可能不支持自动安装，或者已经安装。请尝试点击浏览器菜单（或分享按钮）中的“添加到主屏幕”来安装哦！');
+      return;
+    }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setVisible(false);
+    }
+    setDeferredPrompt(null);
+  };
 
   if (!visible) return null;
 
@@ -20,7 +45,9 @@ export default function InstallPrompt() {
         </div>
       </div>
       <div className="actions">
-        <button className="btn btn-primary btn-sm">立即安装</button>
+        <button className="btn btn-primary btn-sm" onClick={handleInstallClick}>
+          立即安装
+        </button>
         <button className="close-btn" onClick={() => setVisible(false)}><X size={16} /></button>
       </div>
 

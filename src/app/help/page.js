@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export default function HelpPage() {
   const helpCards = [
     {
-      icon: <Rocket className="text-blue-500" />,
+      icon: <Rocket color="#3b82f6" />,
       title: "快速上手路线",
       steps: [
         "第一步：点击首页“添加计划”，开启你的学习之旅。",
@@ -17,7 +17,7 @@ export default function HelpPage() {
       suggestion: "建议开启桌面 PWA 安装，像原生 APP 一样快捷访问。"
     },
     {
-      icon: <Target className="text-orange-500" />,
+      icon: <Target color="#f97316" />,
       title: "艾宾浩斯记忆配置",
       steps: [
         "标准模式：适合大多数学习场景 (1, 3, 6, 14, 29天复习)。",
@@ -27,7 +27,7 @@ export default function HelpPage() {
       suggestion: "在任务编辑器中切换至“高级设置”即可开启该功能。"
     },
     {
-      icon: <Heart className="text-red-500" />,
+      icon: <Heart color="#ef4444" />,
       title: "电子宠物养成手册",
       steps: [
         "饱食度：每次投喂增加 20 饱食度。当数值过低时，宠物会感到饥饿。",
@@ -37,7 +37,7 @@ export default function HelpPage() {
       suggestion: "记得每天来看看你的小家伙，它也有情感哦！"
     },
     {
-      icon: <Zap className="text-yellow-500" />,
+      icon: <Zap color="#eab308" />,
       title: "星星奖励规则",
       steps: [
         "完成计划：根据任务难度获得不同数量的星星奖励。",
@@ -47,7 +47,7 @@ export default function HelpPage() {
       suggestion: "星星可以在“愿望商城”中兑换真实的实体奖励或心愿。"
     },
     {
-      icon: <ShieldCheck className="text-emerald-500" />,
+      icon: <ShieldCheck color="#10b981" />,
       title: "会员特权说明",
       steps: [
         "全站去广告：享受纯净的学习与管理体验。",
@@ -61,8 +61,10 @@ export default function HelpPage() {
   return (
     <div className="help-container">
       <header className="help-header">
-        <Link href="/" className="back-btn">
-          <ChevronLeft size={24} />
+        <Link href="/">
+          <div className="back-btn">
+            <ChevronLeft size={24} />
+          </div>
         </Link>
         <div className="header-content">
           <h1>使用帮助</h1>
@@ -134,7 +136,7 @@ export default function HelpPage() {
         .help-header {
           background: linear-gradient(135deg, #3b82f6, #1e40af);
           color: white;
-          padding: 3rem 1.5rem 4rem;
+          padding: 3.5rem 1.5rem 3rem;
           position: relative;
           text-align: center;
           border-radius: 0 0 40px 40px;
@@ -145,9 +147,12 @@ export default function HelpPage() {
           left: 1.5rem;
           color: white;
           background: rgba(255,255,255,0.2);
-          padding: 0.5rem;
+          width: 40px;
+          height: 40px;
           border-radius: 50%;
           display: flex;
+          align-items: center;
+          justify-content: center;
           backdrop-filter: blur(4px);
         }
         .header-content h1 {
@@ -158,7 +163,7 @@ export default function HelpPage() {
         .header-content p {
           font-size: 0.85rem;
           opacity: 0.8;
-          max-width: 260px;
+          white-space: nowrap;
           margin: 0 auto;
         }
 

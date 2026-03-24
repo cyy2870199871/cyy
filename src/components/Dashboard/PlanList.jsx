@@ -1,11 +1,11 @@
 "use client";
 
 import { useLearningPlan } from '@/hooks/useLearningPlan';
-import { Share2, Check } from 'lucide-react';
+import { Share2, Check, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function PlanList() {
-  const { plans, togglePlan } = useLearningPlan();
+  const { plans, togglePlan, deletePlan } = useLearningPlan();
 
   return (
     <div className="plan-list-container">
@@ -33,6 +33,13 @@ export default function PlanList() {
                 <span className="category">[{plan.category}]</span>
                 <span className="title">{plan.title}</span>
               </div>
+              <button 
+                className="delete-btn" 
+                onClick={(e) => { e.stopPropagation(); deletePlan(plan.id); }}
+                title="删除计划"
+              >
+                <Trash2 size={16} />
+              </button>
             </motion.div>
           ))}
         </AnimatePresence>
@@ -89,6 +96,20 @@ export default function PlanList() {
         .category { color: var(--success); font-weight: 700; margin-right: 0.5rem; font-size: 0.85rem; }
         .title { font-size: 0.9rem; font-weight: 500; }
         .completed .title { text-decoration: line-through; color: var(--text-muted); }
+        .plan-info { 
+          flex: 1; 
+          min-width: 0; 
+          word-break: break-word;
+        }
+        .delete-btn {
+          background: none; border: none; color: #cbd5e1; cursor: pointer;
+          padding: 0.5rem; border-radius: 8px; transition: all 0.2s;
+          display: flex; align-items: center; justify-content: center;
+          flex-shrink: 0;
+          margin-left: auto;
+        }
+        .plan-item:hover .delete-btn { color: #94a3b8; }
+        .delete-btn:hover { color: var(--danger); background: #fee2e2; }
       `}</style>
     </div>
   );

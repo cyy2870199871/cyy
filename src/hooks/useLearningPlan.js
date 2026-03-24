@@ -63,8 +63,8 @@ export function LearningProvider({ children }) {
     }
   }, [user?.id, appInitialized]);
 
-  const addPlan = (planData) => {
-    addPlans([planData]);
+  const addPlan = async (planData) => {
+    return addPlans([planData]);
   };
 
   const addPlans = async (plansData) => {
