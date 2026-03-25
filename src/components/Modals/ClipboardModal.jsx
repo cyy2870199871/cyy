@@ -7,14 +7,16 @@ import { createPortal } from 'react-dom';
 
 export default function ClipboardModal({ isOpen, onClose, content, onRecognize }) {
   const [dontShowAgain, setDontShowAgain] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
+  // Lock scroll when modal is open
   useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-  }, []);
-
-  if (!isOpen || !mounted) return null;
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [isOpen]);
 
   const handleIgnore = () => {
     if (dontShowAgain) {
@@ -33,125 +35,119 @@ export default function ClipboardModal({ isOpen, onClose, content, onRecognize }
     onClose();
   };
 
-  return createPortal(
+  return (
     <div className="modal-overlay" onClick={handleIgnore}>
       <motion.div 
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
+        transition={{ duration: 0.25 }}
         className="modal-content"
         onClick={e => e.stopPropagation()}
       >
-        <button className="close-icon-btn" onClick={handleIgnore}><X size={18} color="#94a3b8" /></button>
+        <button className="close-btn" onClick={handleIgnore}>
+          <X size={20} color="var(--text-muted)" />
+        </button>
 
         <div className="modal-header">
-          <div className="icon-circle">
-            <Clipboard size={18} color="white" />
+          <div className="icon-box">
+            <Clipboard size={24} color="var(--primary)" />
           </div>
-          <div className="header-text">
-            <h2>检测到粘贴板内容</h2>
-            <p>检测到粘贴板中有新内容，是否要将其识别为学习计划？</p>
+          <div className="header-info">
+            <h2>发现新内容</h2>
+            <p>我们要把它加入明天的学习计划吗？</p>
           </div>
         </div>
 
-        <div className="preview-section">
-          <label>内容预览：</label>
-          <div className="text-viewer">
+        <div className="content-preview">
+          <div className="preview-label">
+            <span>剪贴板内容</span>
+            <Sparkles size={14} color="var(--primary)" />
+          </div>
+          <div className="text-box">
             {content}
           </div>
         </div>
 
         <div className="modal-footer">
-          <div className="checkbox-area">
+          <label className="no-more-label">
             <input 
               type="checkbox" 
-              id="dontShow" 
               checked={dontShowAgain}
               onChange={e => setDontShowAgain(e.target.checked)}
             />
-            <label htmlFor="dontShow">不再弹出</label>
-          </div>
+            不再提醒
+          </label>
           
-          <div className="action-btns">
-            <button className="btn-ignore" onClick={handleIgnore}>
-              <X size={16} /> 忽略
-            </button>
-            <button className="btn-recognize" onClick={handleRecognize}>
-              <Sparkles size={16} /> 识别为学习计划
+          <div className="footer-actions">
+            <button className="btn-secondary" onClick={handleIgnore}>忽略</button>
+            <button className="btn-primary" onClick={handleRecognize}>
+              立即识别 <Sparkles size={16} />
             </button>
           </div>
         </div>
 
         <style jsx>{`
-          .modal-overlay {
+          :global(.modal-overlay) {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px);
-            display: flex; align-items: center; justify-content: center; z-index: 100000;
+            background: rgba(15, 23, 42, 0.4) !important; 
+            backdrop-filter: blur(8px) !important;
+            display: flex !important; align-items: center !important; justify-content: center !important; 
+            z-index: 99999 !important;
             padding: 1.5rem;
           }
-          .modal-content {
-            background: white; width: 100%; max-width: 500px;
-            border-radius: 20px; padding: 2.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            position: relative;
-            animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          :global(.modal-content) {
+            background: white !important; width: 100% !important; max-width: 460px !important;
+            border-radius: 32px !important; padding: 2.5rem !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2) !important;
+            position: relative; border: 1px solid rgba(255,255,255,0.8);
           }
-          @keyframes popIn {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-          }
-          
-          .close-icon-btn {
+          :global(.modal-content .close-btn) {
             position: absolute; top: 1.5rem; right: 1.5rem;
-            background: #f1f5f9; border: none; cursor: pointer; padding: 0.5rem;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            background: var(--bg-main); border: none; cursor: pointer;
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
             transition: 0.2s;
           }
-          .close-icon-btn:hover { background: #e2e8f0; transform: rotate(90deg); }
+          :global(.modal-content .close-btn:hover) { background: #e2e8f0; transform: rotate(90deg); }
 
           .modal-header { display: flex; gap: 1.25rem; margin-bottom: 2rem; align-items: center; }
-          .icon-circle {
-            width: 44px; height: 44px; border-radius: 14px;
-            background: #7C3AED; display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; box-shadow: 0 8px 16px rgba(124, 58, 237, 0.2);
+          .icon-box {
+            width: 52px; height: 52px; border-radius: 18px;
+            background: var(--primary-light); display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
           }
-          .header-text h2 { font-size: 1.3rem; font-weight: 800; color: #1e293b; margin-bottom: 0.25rem; }
-          .header-text p { font-size: 0.9rem; color: #64748b; font-weight: 500; line-height: 1.4; }
+          .header-info h2 { font-size: 1.25rem; font-weight: 900; color: var(--text-main); margin-bottom: 0.2rem; }
+          .header-info p { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
 
-          .preview-section { margin-bottom: 2rem; }
-          .preview-section label { display: block; font-size: 0.95rem; font-weight: 800; color: #1e293b; margin-bottom: 0.8rem; }
-          .text-viewer {
-            background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px;
-            padding: 1.25rem; min-height: 120px; color: #475569; font-size: 1rem;
-            line-height: 1.6; word-break: break-all; font-weight: 600;
+          .content-preview { margin-bottom: 2rem; }
+          .preview-label { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+          .preview-label span { font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+          .text-box {
+            background: var(--bg-main); border: 2px solid var(--border); border-radius: 20px;
+            padding: 1.25rem; min-height: 100px; max-height: 200px; overflow-y: auto;
+            color: var(--text-main); font-size: 0.95rem; line-height: 1.6;
+            font-weight: 600; white-space: pre-wrap; word-break: break-all;
           }
 
-          .modal-footer { 
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 0.5rem;
-          }
-          .checkbox-area { display: flex; align-items: center; gap: 0.6rem; }
-          .checkbox-area input { width: 18px; height: 18px; cursor: pointer; accent-color: #7C3AED; border-radius: 4px; }
-          .checkbox-area label { font-size: 0.95rem; color: #64748b; font-weight: 700; cursor: pointer; }
+          .modal-footer { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+          .no-more-label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem; color: var(--text-muted); font-weight: 700; }
+          .no-more-label input { width: 16px; height: 16px; accent-color: var(--primary); }
 
-          .action-btns { display: flex; gap: 0.75rem; }
+          .footer-actions { display: flex; gap: 0.75rem; }
           button { 
-            padding: 0.75rem 1.25rem; border-radius: 12px; font-weight: 800; 
-            font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
-            transition: 0.2s;
+            padding: 0.75rem 1.5rem; border-radius: 16px; font-weight: 800; 
+            font-size: 0.9rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 0.5rem;
           }
-          .btn-ignore { background: #f8fafc; border: 1.5px solid #e2e8f0; color: #64748b; }
-          .btn-ignore:hover { background: #f1f5f9; border-color: #cbd5e1; }
-          
-          .btn-recognize { 
-            background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%); 
-            border: none; color: white;
-            box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
+          .btn-secondary { background: var(--bg-main); border: 1.5px solid var(--border); color: var(--text-muted); }
+          .btn-secondary:hover { background: #f1f5f9; border-color: #cbd5e1; }
+          .btn-primary { 
+            background: var(--gender-gradient); border: none; color: white;
+            box-shadow: 0 10px 15px -3px var(--gender-shadow);
           }
-          .btn-recognize:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(124, 58, 237, 0.4); }
+          .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -5px var(--gender-shadow); }
         `}</style>
       </motion.div>
-    </div>,
-    document.body
+    </div>
   );
 }
