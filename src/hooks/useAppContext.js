@@ -21,14 +21,20 @@ export function AppProvider({ children }) {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [theme, setThemeState] = useState('blue'); // default theme
+  const [customColor, setCustomColorState] = useState('#3B82F6'); // default custom color
 
   // Persist theme choice (mapping old 'gender' keys for backward compatibility)
-  const setTheme = (t) => {
+  const setTheme = (t, customHex = null) => {
     setThemeState(t);
+    if (customHex) setCustomColorState(customHex);
+    
     if (typeof window !== 'undefined') {
       localStorage.setItem('bj_theme', t);
       // Overwrite legacy key so it doesn't revert
       localStorage.setItem('bj_gender', t);
+      if (customHex) {
+        localStorage.setItem('bj_custom_color', customHex);
+      }
     }
   };
 
@@ -36,6 +42,9 @@ export function AppProvider({ children }) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       let saved = localStorage.getItem('bj_theme');
+      let savedCustom = localStorage.getItem('bj_custom_color');
+      
+      if (savedCustom) setCustomColorState(savedCustom);
       
       // Fallback to legacy gender key if theme doesn't exist
       if (!saved) {
@@ -321,6 +330,7 @@ export function AppProvider({ children }) {
       isVipActive: isVipActive(),
       theme,
       setTheme,
+      customColor,
     }}>
       {children}
     </AppContext.Provider>

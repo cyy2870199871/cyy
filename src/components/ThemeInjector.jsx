@@ -175,11 +175,49 @@ export const THEMES = {
 };
 
 export default function ThemeInjector() {
-  const { theme } = useApp();
+  const { theme, customColor } = useApp();
+  
+  const generateVars = (hex) => {
+    // Basic hex to rgb
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    
+    // Simple darken/lighten
+    const darken = (amount) => {
+      const f = (c) => Math.max(0, Math.min(255, Math.floor(c * (1 - amount))));
+      return `#${f(r).toString(16).padStart(2, '0')}${f(g).toString(16).padStart(2, '0')}${f(b).toString(16).padStart(2, '0')}`;
+    };
+    
+    const lighten = (amount) => {
+      const f = (c) => Math.max(0, Math.min(255, Math.floor(c + (255 - c) * amount)));
+      return `#${f(r).toString(16).padStart(2, '0')}${f(g).toString(16).padStart(2, '0')}${f(b).toString(16).padStart(2, '0')}`;
+    };
+
+    const primaryDark = darken(0.15);
+    const primaryLight = lighten(0.94);
+    const shadow = `rgba(${r}, ${g}, ${b}, 0.2)`;
+    const text = darken(0.4);
+
+    return `
+      --primary: ${hex};
+      --primary-dark: ${primaryDark};
+      --primary-light: ${primaryLight};
+      --gender-gradient: linear-gradient(135deg, ${primaryDark} 0%, ${hex} 100%);
+      --gender-shadow: ${shadow};
+      --gender-soft: ${primaryLight};
+      --gender-text: ${text};
+    `;
+  };
 
   useEffect(() => {
-    const currentTheme = THEMES[theme] || THEMES.blue;
-    const vars = currentTheme.vars;
+    let vars = "";
+    if (theme === 'custom') {
+      vars = generateVars(customColor || '#3B82F6');
+    } else {
+      const currentTheme = THEMES[theme] || THEMES.blue;
+      vars = currentTheme.vars;
+    }
     
     let style = document.getElementById("app-theme-vars");
     if (!style) {
@@ -190,7 +228,7 @@ export default function ThemeInjector() {
     style.textContent = `:root { ${vars} }`;
     
     document.body.setAttribute("data-theme", theme);
-  }, [theme]);
+  }, [theme, customColor]);
 
   // Remove legacy gender-theme-vars if it exists
   useEffect(() => {

@@ -7,7 +7,7 @@ import { THEMES } from '@/components/ThemeInjector';
 import { useEffect, useState } from 'react';
 
 export default function ThemePickerModal({ isOpen, onClose }) {
-  const { theme, setTheme } = useApp();
+  const { theme, setTheme, customColor } = useApp();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -25,8 +25,19 @@ export default function ThemePickerModal({ isOpen, onClose }) {
   if (!isOpen || !mounted) return null;
 
   const handleSelect = (t) => {
-    setTheme(t);
+    if (t === 'custom') {
+      setTheme('custom', customColor);
+    } else {
+      setTheme(t);
+    }
   };
+
+  const handleCustomColorChange = (e) => {
+    const newColor = e.target.value;
+    setTheme('custom', newColor);
+  };
+
+  const activeThemeColor = theme === 'custom' ? customColor : (THEMES[theme]?.color || '#3B82F6');
 
   return (
     <>
@@ -44,7 +55,7 @@ export default function ThemePickerModal({ isOpen, onClose }) {
               <div className="modal-header">
                 <div className="title-area">
                   <div className="icon-wrapper">
-                    <Palette size={24} color={THEMES[theme]?.color || '#3B82F6'} />
+                    <Palette size={24} color={activeThemeColor} />
                   </div>
                   <h2>个性色彩搭配</h2>
                 </div>
@@ -74,7 +85,62 @@ export default function ThemePickerModal({ isOpen, onClose }) {
                       <span className="theme-emoji">{tConf.icon}</span>
                     </motion.button>
                   ))}
+
+                  {/* Custom Color Option */}
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`theme-card ${theme === 'custom' ? 'active' : ''}`}
+                    onClick={() => handleSelect('custom')}
+                    style={{ 
+                      '--card-color': customColor, 
+                      borderColor: theme === 'custom' ? customColor : 'transparent',
+                      backgroundColor: theme === 'custom' ? `${customColor}0D` : '#f8fafc'
+                    }}
+                  >
+                    <div className="color-circle" style={{ backgroundColor: customColor, position: 'relative', overflow: 'hidden' }}>
+                       {theme === 'custom' ? (
+                         <Check size={16} color="white" strokeWidth={3} />
+                       ) : (
+                         <div style={{ width: '100%', height: '100%', background: 'linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff)', opacity: 0.8 }} />
+                       )}
+                       <input 
+                         type="color" 
+                         value={customColor} 
+                         onChange={handleCustomColorChange}
+                         style={{
+                           position: 'absolute',
+                           top: -10, left: -10, width: '150%', height: '150%',
+                           opacity: 0, cursor: 'pointer'
+                         }}
+                       />
+                    </div>
+                    <span className="theme-name">自定义</span>
+                    <span className="theme-emoji">🎨</span>
+                  </motion.button>
                 </div>
+
+                {theme === 'custom' && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="custom-color-picker"
+                    style={{ marginTop: '1.5rem', padding: '1rem', background: '#f8fafc', borderRadius: '16px', border: `1px dashed ${customColor}` }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <input 
+                        type="color" 
+                        value={customColor} 
+                        onChange={handleCustomColorChange}
+                        style={{ width: '40px', height: '40px', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+                      />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1e293b' }}>点击左侧色块微调颜色</div>
+                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>当前色值: {customColor.toUpperCase()}</div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           </div>
