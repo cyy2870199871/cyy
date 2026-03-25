@@ -18,7 +18,9 @@ const files = fs.readdirSync(dir).filter(f => f.endsWith('.png'));
       const toVisit = [];
       const enqueue = (x, y) => {
         if (x >= 0 && x < w && y >= 0 && y < h) {
-           toVisit.push(y * w + x);
+           const idx = y * w + x;
+           toVisit.push(idx);
+           visited[idx] = 1;
         }
       };
       enqueue(0, 0);
@@ -26,15 +28,17 @@ const files = fs.readdirSync(dir).filter(f => f.endsWith('.png'));
       enqueue(0, h-1);
       enqueue(w-1, h-1);
       
-      // Relaxed tolerance because generated images can have slight gradients in the white bg
-      const tolerance = 40; 
+      // Use fixed white since generated images are on a white background.
+      // If we use the top left pixel of an already modified image, it might be 0,0,0,0.
       const targetR = 255, targetG = 255, targetB = 255;
+      
+      // Increased tolerance for AI generated images that may have gradients
+      const tolerance = 90; 
       
       let head = 0;
       while(head < toVisit.length) {
         const idx = toVisit[head++];
-        if (visited[idx]) continue;
-        visited[idx] = 1;
+        // visited[idx] is already 1, we don't continue here
         
         const x = idx % w;
         const y = Math.floor(idx / w);
@@ -49,10 +53,10 @@ const files = fs.readdirSync(dir).filter(f => f.endsWith('.png'));
         if (dist <= tolerance) {
           img.bitmap.data[pIdx+3] = 0; // transparent
           // enqueue neighbors
-          if (x > 0 && !visited[idx-1]) toVisit.push(idx - 1);
-          if (x < w - 1 && !visited[idx+1]) toVisit.push(idx + 1);
-          if (y > 0 && !visited[idx-w]) toVisit.push(idx - w);
-          if (y < h - 1 && !visited[idx+w]) toVisit.push(idx + w);
+          if (x > 0 && !visited[idx-1]) { toVisit.push(idx - 1); visited[idx-1] = 1; }
+          if (x < w - 1 && !visited[idx+1]) { toVisit.push(idx + 1); visited[idx+1] = 1; }
+          if (y > 0 && !visited[idx-w]) { toVisit.push(idx - w); visited[idx-w] = 1; }
+          if (y < h - 1 && !visited[idx+w]) { toVisit.push(idx + w); visited[idx+w] = 1; }
         }
       }
 

@@ -41,7 +41,8 @@ const THEMES = {
 };
 
 export default function LoginPage() {
-  const { login, register, setGender: saveGender } = useApp();
+  const { login, register, setTheme } = useApp();
+  const saveGender = (g) => setTheme?.(g === 'female' ? 'pink' : 'blue');
   const [gender, setGender] = useState('male');
   const [isLogin, setIsLogin] = useState(true);
   const [showPwd, setShowPwd] = useState(false);

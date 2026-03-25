@@ -1,19 +1,21 @@
 "use client";
 
 import { useApp } from "@/hooks/useAppContext";
-import { ChevronLeft, Plus, Users, Edit2, Trash2, Check, UserRoundPlus } from "lucide-react";
+import { ChevronLeft, Plus, Users, Edit2, Trash2, Check, UserRoundPlus, Palette } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import ThemePickerModal from "@/components/Modals/ThemePickerModal";
 
 export default function UsersPage() {
   const { members, currentMemberId, addMember, updateMember, deleteMember, switchMember } = useApp();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
   const [formData, setFormData] = useState({ name: '', avatar: '' });
 
   useEffect(() => {
-    if (isAddModalOpen || editingMember) {
+    if (isAddModalOpen || editingMember || isThemeModalOpen) {
       document.body.classList.add('modal-open');
       document.documentElement.classList.add('modal-open');
     } else {
@@ -24,7 +26,7 @@ export default function UsersPage() {
       document.body.classList.remove('modal-open');
       document.documentElement.classList.remove('modal-open');
     };
-  }, [isAddModalOpen, editingMember]);
+  }, [isAddModalOpen, editingMember, isThemeModalOpen]);
 
   const handleAdd = (e) => {
     e.preventDefault();
@@ -54,10 +56,15 @@ export default function UsersPage() {
       <header className="page-header border-b">
         <div className="header-inner">
           <Link href="/" className="back-btn"><ChevronLeft size={24} /></Link>
-          <h1>多成员档案管理</h1>
-          <button className="add-text-btn" onClick={() => setIsAddModalOpen(true)}>
-            <Plus size={18} /> 添加成员
-          </button>
+          <h1>系统概览配置</h1>
+          <div className="header-actions">
+            <button className="theme-btn" onClick={() => setIsThemeModalOpen(true)} title="系统主题与个性化">
+              <Palette size={20} />
+            </button>
+            <button className="add-text-btn" onClick={() => setIsAddModalOpen(true)}>
+              <Plus size={18} /> 添加成员
+            </button>
+          </div>
         </div>
       </header>
 
@@ -161,6 +168,11 @@ export default function UsersPage() {
         )}
       </AnimatePresence>
 
+      <ThemePickerModal 
+        isOpen={isThemeModalOpen} 
+        onClose={() => setIsThemeModalOpen(false)} 
+      />
+
       <style jsx>{`
         .users-page-container {
           min-height: 100vh;
@@ -194,6 +206,14 @@ export default function UsersPage() {
           font-weight: 700; cursor: pointer; transition: 0.2s;
         }
         .add-text-btn:hover { background: #2563eb; transform: translateY(-2px); }
+
+        .header-actions { display: flex; align-items: center; gap: 0.75rem; }
+        .theme-btn {
+          width: 40px; height: 40px; border-radius: 12px; border: none;
+          background: #f1f5f9; color: #64748b; display: flex; align-items: center; justify-content: center;
+          cursor: pointer; transition: 0.2s;
+        }
+        .theme-btn:hover { background: #e2e8f0; color: #3b82f6; transform: translateY(-2px); }
 
         .users-main { padding: 2rem 1.5rem; max-width: 1200px; margin: 0 auto; }
         .members-grid { 

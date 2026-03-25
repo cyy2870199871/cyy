@@ -20,19 +20,33 @@ export function AppProvider({ children }) {
   });
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [gender, setGenderState] = useState('male'); // 'male' | 'female'
+  const [theme, setThemeState] = useState('blue'); // default theme
 
-  // Persist gender choice
-  const setGender = (g) => {
-    setGenderState(g);
-    if (typeof window !== 'undefined') localStorage.setItem('bj_gender', g);
+  // Persist theme choice (mapping old 'gender' keys for backward compatibility)
+  const setTheme = (t) => {
+    setThemeState(t);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bj_theme', t);
+      // Overwrite legacy key so it doesn't revert
+      localStorage.setItem('bj_gender', t);
+    }
   };
 
-  // Load gender from localStorage on mount
+  // Load theme from localStorage on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('bj_gender');
-      if (saved === 'male' || saved === 'female') setGenderState(saved);
+      let saved = localStorage.getItem('bj_theme');
+      
+      // Fallback to legacy gender key if theme doesn't exist
+      if (!saved) {
+        saved = localStorage.getItem('bj_gender');
+        if (saved === 'male') saved = 'blue';
+        if (saved === 'female') saved = 'pink';
+      }
+      
+      if (saved) {
+        setThemeState(saved);
+      }
     }
   }, []);
 
@@ -305,8 +319,8 @@ export function AppProvider({ children }) {
       updateStats,
       isInitialized,
       isVipActive: isVipActive(),
-      gender,
-      setGender,
+      theme,
+      setTheme,
     }}>
       {children}
     </AppContext.Provider>

@@ -13,17 +13,17 @@ export const ALL_PET_TYPES = [
   { id: 'hamster', name: '贪吃仓鼠', image: '/pets/hamster.png', rarity: 'epic', cost: 800, desc: '脸颊塞满瓜子的胖墩' },
   { id: 'ragdoll', name: '布偶猫', image: '/pets/ragdoll.png', rarity: 'legendary', cost: 1500, desc: '拥有星辰大海般双眼的仙女' },
   // New Pets (Using Improved Online Assets)
-  { id: 'husky', name: '哈士奇', image: 'https://img.icons8.com/3d-fluency/200/wolf.png', rarity: 'epic', cost: 900, desc: '拆房小能手，眼神里透着智慧(二哈)' },
-  { id: 'samoyed', name: '萨摩耶', image: 'https://img.icons8.com/3d-fluency/200/dog.png', rarity: 'rare', cost: 600, desc: '微笑天使，治愈系白云团子' },
-  { id: 'panda', name: '大熊猫', image: 'https://raw.githubusercontent.com/smnandre/animoon/main/images/panda.png', rarity: 'legendary', cost: 2000, desc: '国宝级选手，除了吃就是睡' },
-  { id: 'capybara', name: '水豚', image: 'https://img.icons8.com/3d-fluency/200/bear.png', rarity: 'legendary', cost: 1800, desc: '情绪极其稳定的精神领袖' },
-  { id: 'fox', name: '小狐狸', image: 'https://img.icons8.com/3d-fluency/200/fox.png', rarity: 'rare', cost: 500, desc: '聪明伶俐的红狐，尾巴超级蓬松' },
-  { id: 'koala', name: '考拉', image: 'https://raw.githubusercontent.com/smnandre/animoon/main/images/koala.png', rarity: 'epic', cost: 800, desc: '职业发呆选手，永远在睡觉的边缘徘徊' },
-  { id: 'axolotl', name: '六角恐龙', image: 'https://img.icons8.com/3d-fluency/200/clown-fish.png', rarity: 'epic', cost: 1100, desc: '粉嫩的水中精灵，治愈系数爆表' },
-  { id: 'penguin', name: '小企鹅', image: 'https://raw.githubusercontent.com/smnandre/animoon/main/images/penguin.png', rarity: 'rare', cost: 450, desc: '来自南极的小绅士，走起路摇摇晃晃' },
-  { id: 'dragon', name: '小福龙', image: 'https://img.icons8.com/3d-fluency/200/dragon.png', rarity: 'mythic', cost: 5000, desc: '传说中的吉祥神兽，能带来无尽福气' },
-  { id: 'calico', name: '三花猫', image: 'https://img.icons8.com/3d-fluency/200/cat.png', rarity: 'common', cost: 200, desc: '性格灵动的招财小猫' },
-  { id: 'greycat', name: '小灰猫', image: 'https://img.icons8.com/3d-fluency/200/cat.png', rarity: 'common', cost: 150, desc: '乖巧温顺的身后跟班' },
+  { id: 'husky', name: '哈士奇', image: '/pets/husky.png', rarity: 'epic', cost: 900, desc: '拆房小能手，眼神里透着智慧(二哈)' },
+  { id: 'samoyed', name: '萨摩耶', image: '/pets/samoyed.png', rarity: 'rare', cost: 600, desc: '微笑天使，治愈系白云团子' },
+  { id: 'panda', name: '大熊猫', image: '/pets/panda.png', rarity: 'legendary', cost: 2000, desc: '国宝级选手，除了吃就是睡' },
+  { id: 'capybara', name: '水豚', image: '/pets/capybara.png', rarity: 'legendary', cost: 1800, desc: '情绪极其稳定的精神领袖' },
+  { id: 'fox', name: '小狐狸', image: '/pets/fox.png', rarity: 'rare', cost: 500, desc: '聪明伶俐的红狐，尾巴超级蓬松' },
+  { id: 'koala', name: '考拉', image: '/pets/koala.png', rarity: 'epic', cost: 800, desc: '职业发呆选手，永远在睡觉的边缘徘徊' },
+  { id: 'axolotl', name: '六角恐龙', image: '/pets/axolotl.png', rarity: 'epic', cost: 1100, desc: '粉嫩的水中精灵，治愈系数爆表' },
+  { id: 'penguin', name: '小企鹅', image: '/pets/penguin.png', rarity: 'rare', cost: 450, desc: '来自南极的小绅士，走起路摇摇晃晃' },
+  { id: 'dragon', name: '小福龙', image: '/pets/dragon.png', rarity: 'mythic', cost: 5000, desc: '传说中的吉祥神兽，能带来无尽福气' },
+  { id: 'calico', name: '三花猫', image: '/pets/calico.png', rarity: 'common', cost: 200, desc: '性格灵动的招财小猫' },
+  { id: 'greycat', name: '小灰猫', image: '/pets/greycat.png', rarity: 'common', cost: 150, desc: '乖巧温顺的身后跟班' },
 ];
 
 export function PetProvider({ children }) {

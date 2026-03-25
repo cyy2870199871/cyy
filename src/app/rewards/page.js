@@ -31,9 +31,9 @@ export default function RewardsPage() {
   const { wishes, medals, redeemWish, addWish } = useRewards();
   const { user } = useApp();
 
-  const handleRedeem = (id) => {
-    const res = redeemWish(id);
-    if (!res.success) {
+  const handleRedeem = async (id) => {
+    const res = await redeemWish(id);
+    if (res && !res.success) {
       alert(res.message);
     }
   };
@@ -147,43 +147,44 @@ export default function RewardsPage() {
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 50, opacity: 0 }}
-              className="modal-content item-card"
               onClick={e => e.stopPropagation()}
             >
-              <h3>添加新愿望</h3>
-              <form onSubmit={handleAddWish}>
-                <div className="form-group">
-                  <label>愿望名称</label>
-                  <input 
-                    type="text" 
-                    value={newWish.title} 
-                    onChange={e => setNewWish({...newWish, title: e.target.value})}
-                    placeholder="如：去游乐园"
-                    required
-                  />
-                </div>
-                <div className="form-row">
+              <div className="modal-content item-card">
+                <h3>添加新愿望</h3>
+                <form onSubmit={handleAddWish}>
                   <div className="form-group">
-                    <label>所需星星</label>
+                    <label>愿望名称</label>
                     <input 
-                      type="number" 
-                      value={newWish.cost} 
-                      onChange={e => setNewWish({...newWish, cost: Number(e.target.value)})}
-                      min="1"
+                      type="text" 
+                      value={newWish.title} 
+                      onChange={e => setNewWish({...newWish, title: e.target.value})}
+                      placeholder="如：去游乐园"
+                      required
                     />
                   </div>
-                  <div className="form-group">
-                    <label>图标</label>
-                    <select value={newWish.icon} onChange={e => setNewWish({...newWish, icon: e.target.value})}>
-                      <option>🎁</option><option>🍔</option><option>🧸</option><option>🎡</option><option>🏝️</option><option>🎮</option><option>🍦</option>
-                    </select>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>所需星星</label>
+                      <input 
+                        type="number" 
+                        value={newWish.cost} 
+                        onChange={e => setNewWish({...newWish, cost: Number(e.target.value)})}
+                        min="1"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>图标</label>
+                      <select value={newWish.icon} onChange={e => setNewWish({...newWish, icon: e.target.value})}>
+                        <option>🎁</option><option>🍔</option><option>🧸</option><option>🎡</option><option>🏝️</option><option>🎮</option><option>🍦</option>
+                      </select>
+                    </div>
                   </div>
-                </div>
-                <div className="modal-actions">
-                  <button type="button" className="cancel-btn" onClick={() => setShowAddModal(false)}>取消</button>
-                  <button type="submit" className="confirm-btn">确认添加</button>
-                </div>
-              </form>
+                  <div className="modal-actions">
+                    <button type="button" className="cancel-btn" onClick={() => setShowAddModal(false)}>取消</button>
+                    <button type="submit" className="confirm-btn">确认添加</button>
+                  </div>
+                </form>
+              </div>
             </motion.div>
           </div>
         )}

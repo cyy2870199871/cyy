@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import Providers from "@/components/Providers";
 import StyledJsxRegistry from "@/components/StyledJsxRegistry";
-import GenderThemeInjector from "@/components/GenderThemeInjector";
+import ThemeInjector from "@/components/ThemeInjector";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <StyledJsxRegistry>
           <Providers>
-            <GenderThemeInjector />
+            <ThemeInjector />
             {children}
           </Providers>
         </StyledJsxRegistry>
