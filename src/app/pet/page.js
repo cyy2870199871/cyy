@@ -6,8 +6,13 @@ import { PET_LEVELS } from "@/constants/rules";
 import { ChevronLeft, Edit2, Heart, Soup, Bath, TreePine, BedDouble, Lock, Check, Settings, Smile } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import AdoptPetModal from "@/components/Modals/AdoptPetModal";
+import { m, AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const AdoptPetModal = dynamic(() => import("@/components/Modals/AdoptPetModal"), {
+  loading: () => null,
+  ssr: false
+});
 
 export default function PetPage() {
   const { user } = useApp();
@@ -145,18 +150,18 @@ export default function PetPage() {
             <div className="hero-center">
               <AnimatePresence>
                 {actionFeedback && (
-                  <motion.div 
+                  <m.div 
                     initial={{ opacity: 0, scale: 0.8, y: 30 }}
                     animate={{ opacity: 1, scale: 1, y: -40 }}
                     exit={{ opacity: 0, y: -60 }}
                     className="feedback-bubble"
                   >
                     {actionFeedback}! ✨
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
               
-              <motion.div 
+              <m.div 
                 animate={{ 
                   y: [0, -12, 0], 
                   scale: actionFeedback ? [levelInfo?.scale || 1, (levelInfo?.scale || 1) * 1.05, levelInfo?.scale || 1] : (levelInfo?.scale || 1) 
@@ -179,7 +184,7 @@ export default function PetPage() {
                     }}
                   />
                 </div>
-              </motion.div>
+              </m.div>
             </div>
 
             <div className="hero-bottom">

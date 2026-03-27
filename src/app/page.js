@@ -5,8 +5,10 @@ import StatsGrid from "@/components/Dashboard/StatsGrid";
 import QuickActions from "@/components/Dashboard/QuickActions";
 import MainTabs from "@/components/Dashboard/MainTabs";
 import PetHouse from "@/components/Dashboard/PetHouse";
-import InstallPrompt from "@/components/Dashboard/InstallPrompt";
-import CheckInHeatmap from "@/components/Dashboard/CheckInHeatmap";
+import dynamic from "next/dynamic";
+
+const InstallPrompt = dynamic(() => import("@/components/Dashboard/InstallPrompt"), { ssr: false });
+const CheckInHeatmap = dynamic(() => import("@/components/Dashboard/CheckInHeatmap"), { ssr: false });
 
 export default function DashboardPage() {
   return (

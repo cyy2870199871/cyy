@@ -3,7 +3,7 @@
 import { usePet, ALL_PET_TYPES } from "@/hooks/useGamification";
 import { PET_LEVELS } from "@/constants/rules";
 import { Heart, ChevronRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import Link from "next/link";
 
 export default function PetHouse() {
@@ -46,7 +46,7 @@ export default function PetHouse() {
 
         <div className="pet-body">
           <div className="pet-visual-section">
-            <motion.div
+            <m.div
               animate={{ 
                 y: [0, -10, 0],
                 scale: levelInfo?.scale || 1
@@ -68,7 +68,7 @@ export default function PetHouse() {
                   }
                 }}
               />
-            </motion.div>
+            </m.div>
           </div>
 
           <div className="pet-stats-section">

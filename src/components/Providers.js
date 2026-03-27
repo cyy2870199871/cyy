@@ -8,6 +8,8 @@ import { RewardsProvider } from '@/hooks/useRewards';
 import EvolutionModal from '@/components/Pet/EvolutionModal';
 import { useEffect } from 'react';
 
+import { LazyMotion, domAnimation } from "framer-motion";
+
 export default function Providers({ children }) {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -16,17 +18,19 @@ export default function Providers({ children }) {
   }, []);
 
   return (
-    <AppProvider>
-      <LearningProvider>
-        <HabitsProvider>
-          <RewardsProvider>
-          <PetProvider>
-            <EvolutionModal />
-            {children}
-          </PetProvider>
-          </RewardsProvider>
-        </HabitsProvider>
-      </LearningProvider>
-    </AppProvider>
+    <LazyMotion features={domAnimation}>
+      <AppProvider>
+        <LearningProvider>
+          <HabitsProvider>
+            <RewardsProvider>
+              <PetProvider>
+                <EvolutionModal />
+                {children}
+              </PetProvider>
+            </RewardsProvider>
+          </HabitsProvider>
+        </LearningProvider>
+      </AppProvider>
+    </LazyMotion>
   );
 }

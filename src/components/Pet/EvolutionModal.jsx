@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { usePet, ALL_PET_TYPES } from '@/hooks/useGamification';
 import { PET_LEVELS } from '@/constants/rules';
 import { Trophy } from 'lucide-react';
@@ -52,7 +52,7 @@ export default function EvolutionModal() {
     <AnimatePresence>
       {show && (
         <div className="evolution-overlay">
-          <motion.div 
+          <m.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -60,33 +60,33 @@ export default function EvolutionModal() {
           />
           
           <div className="evolution-content-wrapper">
-            <motion.div 
+            <m.div 
               initial={{ opacity: 1 }}
               animate={{ opacity: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="evolution-flash"
             />
 
-            <motion.div
+            <m.div
               initial={{ scale: 0.5, opacity: 0, y: 100 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               transition={{ type: "spring", damping: 15, stiffness: 100 }}
               className="evolution-card"
             >
               <div className="card-header">
-                <motion.div
+                <m.div
                   animate={{ rotate: [0, -15, 15, -15, 0] }}
                   transition={{ duration: 0.7, delay: 0.3 }}
                 >
                   <Trophy size={64} color="#F59E0B" strokeWidth={2.5} />
-                </motion.div>
+                </m.div>
                 <h2>进化成功！</h2>
                 <p className="subtitle">{petName} 已经突破了瓶颈</p>
               </div>
 
               <div className="visual-stage">
                 <div className="glow-burst" />
-                <motion.div
+                <m.div
                   animate={{ 
                     y: [0, -15, 0],
                     scale: [1, 1.05, 1]
@@ -107,7 +107,7 @@ export default function EvolutionModal() {
                       }
                     }}
                   />
-                </motion.div>
+                </m.div>
               </div>
 
               <div className="evolution-stats">
@@ -127,7 +127,7 @@ export default function EvolutionModal() {
               }}>
                 看我的！
               </button>
-            </motion.div>
+            </m.div>
           </div>
 
           <style jsx global>{`
