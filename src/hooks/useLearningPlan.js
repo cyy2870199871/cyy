@@ -9,7 +9,7 @@ import { toast } from 'react-hot-toast';
 const LearningContext = createContext();
 
 export function LearningProvider({ children }) {
-  const { user, isInitialized: appInitialized, addPoints, selectedDate, setSelectedDate } = useApp();
+  const { user, isInitialized: appInitialized, addPoints, updateMember, selectedDate, setSelectedDate } = useApp();
   const [plans, setPlans] = useState([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -110,6 +110,14 @@ export function LearningProvider({ children }) {
         body: JSON.stringify({ ...target, completed: newCompleted })
       });
       if (res.ok) {
+        // If this is the first completion today, increment checkInDays
+        const today = new Date().toISOString().split('T')[0];
+        const otherPlansCompletedToday = plans.some(p => p.id !== id && p.completed && p.date === today);
+        
+        if (newCompleted && !otherPlansCompletedToday) {
+          updateMember(user.id, { checkInDays: (user.checkInDays || 0) + 1 });
+        }
+        
         toast.success(newCompleted ? '太棒了！任务已完成' : '任务已重置');
       }
     } catch (error) {

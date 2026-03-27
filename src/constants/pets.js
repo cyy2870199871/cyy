@@ -16,4 +16,5 @@ export const ALL_PET_TYPES = [
   { id: 'dragon', name: '小福龙', image: '/pets/dragon.png', rarity: 'mythic', cost: 5000, desc: '传说中的吉祥神兽，能带来无尽福气' },
   { id: 'calico', name: '三花猫', image: '/pets/calico.png', rarity: 'common', cost: 200, desc: '性格灵动的招财小猫' },
   { id: 'greycat', name: '小灰猫', image: '/pets/greycat.png', rarity: 'common', cost: 150, desc: '乖巧温顺的身后跟班' },
+  { id: 'cyber_dragon', name: '赛博雷龙', image: '/pets/cyber_dragon_lv1.png', rarity: 'mythic', cost: 10000, desc: '来自平行次元的数码代码聚合成的正义之龙', isEvolutionary: true },
 ];

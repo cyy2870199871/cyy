@@ -1,6 +1,7 @@
 "use client";
 
 import { useApp } from "@/hooks/useAppContext";
+import { useHabits } from "@/hooks/useHabits";
 import { User, Gift, Zap, Ticket, ChevronDown, Users, LogOut, Settings, UserRoundPlus } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
@@ -8,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function Header() {
   const { user, members, switchMember, family, logout, addMember } = useApp();
+  const { stats } = useHabits();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newName, setNewName] = useState("");
@@ -52,12 +54,13 @@ export default function Header() {
   }, []);
 
   const vipDays = family?.vipExpiry ? Math.max(0, Math.ceil((Number(family.vipExpiry) - Date.now()) / (1000 * 60 * 60 * 24))) : 0;
+  const displayCheckInDays = stats?.totalActiveDays ?? user?.checkInDays ?? 0;
 
   return (
     <header className="header">
       <div className="brand">
         <h1>小打卡 - 学习打卡助手</h1>
-        <p>今日已打卡 <span className="highlight">{user.checkInDays}</span> 天</p>
+        <p>累计打卡 <span className="highlight">{displayCheckInDays}</span> 天</p>
       </div>
 
       <div className="user-info">

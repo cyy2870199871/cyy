@@ -39,9 +39,15 @@ export default function EvolutionModal() {
   const oldLevelInfo = PET_LEVELS.find(l => l.level === oldLevel);
 
   // Correct path for evolutionary images
-  const petImage = typeId === 'corgi' 
-    ? `/pets/corgi_lv${newLevel}.png` 
+  const isEvolutionary = petType?.isEvolutionary || typeId === 'corgi';
+  const petImage = isEvolutionary 
+    ? `/pets/${typeId}_lv${newLevel}.png` 
     : (petType?.image || '/pets/corgi.png');
+
+  const themeColor = typeId === 'cyber_dragon' ? '#3B82F6' : '#F59E0B';
+  const themeGradient = typeId === 'cyber_dragon' 
+    ? 'linear-gradient(135deg, #06B6D4, #3B82F6)' 
+    : 'linear-gradient(135deg, #F59E0B, #EF4444)';
 
   const modalContent = (
     <AnimatePresence>
@@ -108,7 +114,7 @@ export default function EvolutionModal() {
                   <span className="badge new">{newLevelInfo?.name}</span>
                 </div>
                 <div className="congrats-text">
-                  形态已变为 <span className="highlight">{newLevelInfo?.name}</span>
+                  形态已变为 <span className="highlight" style={{ color: themeColor }}>{newLevelInfo?.name}</span>
                 </div>
               </div>
 
@@ -167,7 +173,7 @@ export default function EvolutionModal() {
             .card-header h2 {
               font-size: 2.6rem !important;
               font-weight: 900 !important;
-              background: linear-gradient(135deg, #F59E0B, #EF4444) !important;
+              background: ${themeGradient} !important;
               -webkit-background-clip: text !important;
               -webkit-text-fill-color: transparent !important;
               margin: 1.2rem 0 0.5rem !important;
@@ -186,7 +192,7 @@ export default function EvolutionModal() {
               position: absolute !important;
               width: 300px !important;
               height: 300px !important;
-              background: radial-gradient(circle, rgba(245, 158, 11, 0.4) 0%, transparent 70%) !important;
+              background: radial-gradient(circle, ${themeColor}66 0%, transparent 70%) !important;
               border-radius: 50% !important;
               animation: evo-pulse 3s infinite ease-in-out !important;
             }
@@ -197,7 +203,7 @@ export default function EvolutionModal() {
             .stage-badges { display: flex !important; align-items: center !important; justify-content: center !important; gap: 1.5rem !important; margin-bottom: 1.5rem !important; }
             .badge { padding: 0.7rem 1.4rem !important; border-radius: 99px !important; font-weight: 800 !important; font-size: 1rem !important; }
             .badge.old { background: #f1f5f9 !important; color: #94a3b8 !important; text-decoration: line-through !important; }
-            .badge.new { background: #fee2e2 !important; color: #ef4444 !important; box-shadow: 0 0 25px rgba(239, 68, 68, 0.4) !important; border: 2px solid #fecaca !important; }
+            .badge.new { background: ${themeColor}22 !important; color: ${themeColor} !important; box-shadow: 0 0 25px ${themeColor}66 !important; border: 2px solid ${themeColor}44 !important; }
             .arrow-line { color: #cbd5e1 !important; font-weight: 900 !important; font-size: 1.5rem !important; }
             .congrats-text { font-size: 1.3rem !important; color: #1e293b !important; font-weight: 800 !important; }
             .highlight { color: #ef4444 !important; }

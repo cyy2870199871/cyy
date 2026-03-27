@@ -11,9 +11,10 @@ export default function PetHouse() {
 
   const currentType = ALL_PET_TYPES.find(t => t.id === pet.typeId) || ALL_PET_TYPES[0];
   
-  // Evolutionary image logic (Featured for corgi, generic for others)
-  const petImage = pet.typeId === 'corgi' 
-    ? `/pets/corgi_lv${pet.level || 1}.png` 
+  // Evolutionary image logic (Dynamic for corgi and cyber_dragon)
+  const isEvolutionary = currentType.isEvolutionary || pet.typeId === 'corgi';
+  const petImage = isEvolutionary 
+    ? `/pets/${pet.typeId}_lv${pet.level || 1}.png` 
     : (currentType.image || '/pets/corgi.png');
 
   // Ensure values are within valid ranges

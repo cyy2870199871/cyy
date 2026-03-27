@@ -6,15 +6,15 @@ const planSchema = z.object({
   userId: z.string().min(1, 'userId 不能为空'),
   title: z.string().min(1, '计划名称不能为空'),
   date: z.string().min(1, '日期不能为空'),
-  timeType: z.string().optional(),
-  startTime: z.string().optional(),
-  endTime: z.string().optional(),
-  duration: z.string().optional(),
+  timeType: z.string().optional().nullable(),
+  startTime: z.string().optional().nullable(),
+  endTime: z.string().optional().nullable(),
+  duration: z.union([z.string(), z.number()]).optional().nullable(),
   completed: z.boolean().default(false),
-  category: z.string().optional(),
-  reward: z.number().int().default(0),
-  repeatType: z.string().optional(),
-  ebbinghausMode: z.string().optional(),
+  category: z.string().optional().nullable(),
+  reward: z.coerce.number().int().default(0),
+  repeatType: z.string().optional().nullable(),
+  ebbinghausMode: z.string().optional().nullable(),
 });
 
 const batchPlanSchema = z.array(planSchema);
@@ -64,7 +64,7 @@ export async function POST(request) {
           timeType: plan.timeType,
           startTime: plan.startTime,
           endTime: plan.endTime,
-          duration: plan.duration,
+          duration: plan.duration ? Number(plan.duration) : null,
           completed: plan.completed,
           category: plan.category,
           reward: plan.reward,
@@ -88,7 +88,7 @@ export async function POST(request) {
           timeType: data.timeType,
           startTime: data.startTime,
           endTime: data.endTime,
-          duration: data.duration,
+          duration: data.duration ? Number(data.duration) : null,
           completed: data.completed,
           category: data.category,
           reward: data.reward,
@@ -100,7 +100,11 @@ export async function POST(request) {
       return NextResponse.json(newPlan);
     }
   } catch (error) {
-    console.error('Create plan(s) error:', error);
-    return NextResponse.json({ error: '创建计划失败' }, { status: 500 });
+    console.error('Create plan(s) error [Detailed]:', error);
+    return NextResponse.json({ 
+      error: '创建计划失败', 
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    }, { status: 500 });
   }
 }

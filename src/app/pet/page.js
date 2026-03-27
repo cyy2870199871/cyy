@@ -33,9 +33,14 @@ export default function PetPage() {
   const currentType = ALL_PET_TYPES.find(t => t.id === pet.typeId) || ALL_PET_TYPES[0];
   
   // Evolutionary image logic
-  const petImage = pet.typeId === 'corgi' 
-    ? `/pets/corgi_lv${pet.level || 1}.png` 
+  const isEvolutionary = currentType.isEvolutionary || pet.typeId === 'corgi';
+  const petImage = isEvolutionary 
+    ? `/pets/${pet.typeId}_lv${pet.level || 1}.png` 
     : (currentType.image || '/pets/corgi.png');
+
+  const heroGradient = pet.typeId === 'cyber_dragon'
+    ? 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)'
+    : 'linear-gradient(135deg, #22D3EE 0%, #34D399 100%)';
 
   const stats = [
     { 
@@ -81,7 +86,10 @@ export default function PetPage() {
         
         {/* 左列：主要互动区 */}
         <div className="layout-left">
-          <section className="hero-gradient-card">
+            <div 
+              className="hero-gradient-card"
+              style={{ background: heroGradient }}
+            >
             <div className="hero-top">
               <div className="hero-info">
                 <span className="lvl-text">Lv.{pet.level} {levelName}</span>
@@ -148,7 +156,7 @@ export default function PetPage() {
             <div className="hero-bottom">
               <p className="mood-quote">每天都有你陪着，我真的很幸福...</p>
             </div>
-          </section>
+            </div>
 
           <section className="status-cards-row">
             {stats.map(s => (

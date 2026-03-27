@@ -8,7 +8,7 @@ import { toast } from 'react-hot-toast';
 const HabitsContext = createContext();
 
 export function HabitsProvider({ children }) {
-  const { user, addPoints, isInitialized: appInitialized, selectedDate } = useApp();
+  const { user, addPoints, updateMember, isInitialized: appInitialized, selectedDate } = useApp();
   const [habits, setHabits] = useState([]);
   const [records, setRecords] = useState([]);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -133,6 +133,13 @@ export function HabitsProvider({ children }) {
         const newRecord = await res.json();
         setRecords(prev => [newRecord, ...prev]);
         addPoints(habit.points);
+
+        // Increment checkInDays if this is the first positive check-in today
+        const hasCheckedInToday = records.some(r => r.date === today && r.pointsChange > 0);
+        if (!hasCheckedInToday && habit.points > 0) {
+          updateMember(user.id, { checkInDays: (user.checkInDays || 0) + 1 });
+        }
+
         toast.success(`打卡成功！获得 ${habit.points} 星星`);
         return true;
       }
@@ -150,13 +157,16 @@ export function HabitsProvider({ children }) {
     const positiveCheckIns = records.filter(r => r.pointsChange > 0).length;
     const negativeCheckIns = records.filter(r => r.pointsChange < 0).length;
 
+    const totalActiveDays = new Set(records.filter(r => r.pointsChange > 0).map(r => r.date)).size;
+    
     return {
       totalCheckIns: records.length,
       todayCheckIns: todayRecords.length,
       totalPointsFromHabits,
       positiveCheckIns,
       negativeCheckIns,
-      habitCount: habits.length
+      habitCount: habits.length,
+      totalActiveDays
     };
   }, [habits, records]);
 

@@ -71,6 +71,7 @@ model Pet {
   fullness        Int       @default(80)
   cleanliness     Int       @default(90)
   mood            Int       @default(85)
+  gender          String    @default("male")
   isActive        Boolean   @default(false)
   lastInteraction DateTime  @default(now())
   userId          String
