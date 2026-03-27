@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import * as jose from 'jose';
 import { z } from 'zod';
 
 const loginSchema = z.object({
@@ -43,11 +43,13 @@ export async function POST(request) {
       return NextResponse.json({ error: '用户名或密码错误' }, { status: 401 });
     }
 
-    const token = jwt.sign(
-      { familyId: family.id, username: family.username },
-      SAFE_JWT_SECRET,
-      { expiresIn: '30d' }
-    );
+    // Edge-compatible JWT signing with jose
+    const secret = new TextEncoder().encode(SAFE_JWT_SECRET);
+    const token = await new jose.SignJWT({ familyId: family.id, username: family.username })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
+      .setExpirationTime('30d')
+      .sign(secret);
 
     return NextResponse.json({
       family: {

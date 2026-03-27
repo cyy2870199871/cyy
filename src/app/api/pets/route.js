@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
-import crypto from 'crypto';
 
 const petSchema = z.object({
   userId: z.string().min(1, 'userId 不能为空'),
@@ -76,7 +75,11 @@ export async function POST(request) {
       await prisma.$executeRaw`UPDATE pets SET isActive = 0 WHERE userId = ${data.userId}`;
     }
 
-    const randomId = 'p-' + crypto.randomBytes(4).toString('hex');
+    // Edge-compatible random ID generation
+    const array = new Uint8Array(4);
+    globalThis.crypto.getRandomValues(array);
+    const randomId = 'p-' + Array.from(array).map(b => b.toString(16).padStart(2, '0')).join('');
+
     await prisma.$executeRaw`
       INSERT INTO pets (id, name, typeId, level, intimacy, fullness, cleanliness, mood, isActive, userId, lastInteraction)
       VALUES (${randomId}, ${data.name}, ${data.typeId}, ${data.level}, ${data.intimacy}, ${data.fullness}, ${data.cleanliness}, ${data.mood}, ${data.isActive ? 1 : 0}, ${data.userId}, ${now})
