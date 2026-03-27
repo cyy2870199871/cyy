@@ -1,18 +1,8 @@
-import withBundleAnalyzer from '@next/bundle-analyzer';
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-};
+  output: "standalone", // 关键：禁用大缓存
+  cache: false, // 强制关闭缓存
+  distDir: ".next",
+}
 
-const analyzer = withBundleAnalyzer({
-  enabled: process.env.ANALYZE === 'true',
-});
-
-export default analyzer(nextConfig);
+export default nextConfig;
