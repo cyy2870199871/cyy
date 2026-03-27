@@ -11,7 +11,6 @@ export async function GET(request) {
       return NextResponse.json({ error: '缺少 userId' }, { status: 400 });
     }
 
-    // Single parallel query to fetch all initial dashboard data
     const [member, activePet, habits, records, plans] = await Promise.all([
       prisma.user.findUnique({
         where: { id: userId },
@@ -35,6 +34,11 @@ export async function GET(request) {
         orderBy: { createdAt: 'desc' }
       })
     ]);
+
+    // Handle BigInt serialization for Family model (vipExpiry)
+    if (member?.family) {
+      member.family.vipExpiry = member.family.vipExpiry.toString();
+    }
 
     return NextResponse.json({
       member,
