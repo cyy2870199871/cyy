@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  distDir: "out",
   eslint: {
     ignoreDuringBuilds: true, // 👈 核心：忽略所有 ESLint 错误
   },
