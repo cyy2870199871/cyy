@@ -9,6 +9,15 @@ export default function InstallPrompt() {
   const [platform, setPlatform] = useState('desktop');
 
   useEffect(() => {
+    // Detect if already in standalone/native app mode
+    const isCapacitor = !!window.Capacitor;
+    const isStandalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+    
+    if (isCapacitor || isStandalone) {
+      setVisible(false);
+      return;
+    }
+
     // Detect platform
     const ua = navigator.userAgent;
     if (/iPad|iPhone|iPod/.test(ua)) {
