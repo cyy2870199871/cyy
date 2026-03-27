@@ -3,7 +3,6 @@ import { useApp } from './useAppContext';
 import { ALL_PET_TYPES } from '@/constants/pets';
 import { PET_LEVELS, PET_INTERACTIONS } from '@/constants/rules';
 import { toast } from 'react-hot-toast';
-import crypto from 'crypto';
 
 export { ALL_PET_TYPES };
 

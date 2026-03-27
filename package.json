@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && rm -rf .next/cache",
+    "pages:build": "npx @cloudflare/next-on-pages",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate"
@@ -14,6 +15,8 @@
     "@capacitor/cli": "^8.3.0",
     "@capacitor/core": "^8.3.0",
     "@prisma/client": "^6.19.2",
+    "@tidbcloud/prisma-adapter": "^6.17.0",
+    "@tidbcloud/serverless": "^0.3.0",
     "bcryptjs": "^3.0.3",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^12.38.0",

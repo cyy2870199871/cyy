@@ -7,6 +7,8 @@ import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const runtime = 'edge';
+
 export const metadata = {
   title: "家庭打卡与学习系统",
   description: "基于 Next.js 的全栈家庭打卡、习惯养成与宠物互动系统",
