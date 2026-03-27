@@ -39,21 +39,14 @@ export default function EvolutionModal() {
   const oldLevelInfo = PET_LEVELS.find(l => l.level === oldLevel);
 
   // Correct path for evolutionary images
-  const isEvolutionary = petType?.isEvolutionary || typeId === 'corgi';
-  // Evolutionary or Gendered image logic
-  let petImage = petType?.image || '/pets/corgi.png';
-  
-  if (isEvolutionary) {
-    petImage = `/pets/${typeId}_lv${newLevel}.png`;
-  } else if (petType?.hasGender) {
-    const genderSuffix = gender === 'female' ? 'female' : 'male';
-    petImage = `/pets/${typeId}_${genderSuffix}.png`;
-  }
+  const isEvolutionary = petType?.isEvolutionary ?? true;
+  const petImage = `/pets/${typeId}_lv${newLevel}.png`;
 
-  const themeColor = typeId === 'cyber_dragon' ? '#3B82F6' : '#F59E0B';
-  const themeGradient = typeId === 'cyber_dragon' 
-    ? 'linear-gradient(135deg, #06B6D4, #3B82F6)' 
-    : 'linear-gradient(135deg, #F59E0B, #EF4444)';
+  const elementColors = {
+    '火': '#EF4444', '水': '#3B82F6', '机械': '#64748B', '自然': '#10B981', '光': '#F59E0B', '暗': '#6366F1', '电': '#EAB308'
+  };
+  const themeColor = elementColors[petType?.element] || '#F59E0B';
+  const themeGradient = `linear-gradient(135deg, ${themeColor}, #00000000)`; // Simplified for dynamic
 
   const modalContent = (
     <AnimatePresence>
@@ -108,7 +101,11 @@ export default function EvolutionModal() {
                     src={petImage} 
                     alt="Evolved Pet" 
                     className="evolved-img" 
-                    onError={(e) => { e.target.src = '/pets/corgi.png'; }}
+                    onError={(e) => { 
+                      if (e.target.src !== window.location.origin + '/pets/fire_dragon_lv1.png') {
+                        e.target.src = '/pets/fire_dragon_lv1.png'; 
+                      }
+                    }}
                   />
                 </motion.div>
               </div>
@@ -156,7 +153,7 @@ export default function EvolutionModal() {
               position: relative !important;
               z-index: 200001 !important;
               width: 100% !important;
-              max-width: 500px !important;
+              max-width: 380px !important;
               padding: 20px !important;
               display: flex !important;
               justify-content: center !important;
@@ -171,61 +168,61 @@ export default function EvolutionModal() {
             .evolution-card {
               background: white !important;
               width: 100% !important;
-              border-radius: 48px !important;
-              padding: 4rem 2rem !important;
+              border-radius: 40px !important;
+              padding: 2.5rem 1.5rem !important;
               text-align: center !important;
-              box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8) !important;
+              box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.6) !important;
             }
             .card-header h2 {
-              font-size: 2.6rem !important;
+              font-size: 2rem !important;
               font-weight: 900 !important;
               background: ${themeGradient} !important;
               -webkit-background-clip: text !important;
               -webkit-text-fill-color: transparent !important;
               margin: 1.2rem 0 0.5rem !important;
             }
-            .subtitle { color: #64748b !important; font-size: 1.1rem !important; margin-bottom: 2.5rem !important; font-weight: 600 !important; }
+            .subtitle { color: #64748b !important; font-size: 0.95rem !important; margin-bottom: 1.5rem !important; font-weight: 600 !important; }
 
             .visual-stage {
-              height: 240px !important;
+              height: 180px !important;
               display: flex !important;
               align-items: center !important;
               justify-content: center !important;
               position: relative !important;
-              margin-bottom: 3rem !important;
+              margin-bottom: 2rem !important;
             }
             .glow-burst {
               position: absolute !important;
-              width: 300px !important;
-              height: 300px !important;
+              width: 240px !important;
+              height: 240px !important;
               background: radial-gradient(circle, ${themeColor}66 0%, transparent 70%) !important;
               border-radius: 50% !important;
               animation: evo-pulse 3s infinite ease-in-out !important;
             }
-            .pet-showcase { position: relative !important; z-index: 2 !important; width: 220px !important; height: 220px !important; display: flex !important; align-items: center !important; justify-content: center !important; }
+            .pet-showcase { position: relative !important; z-index: 2 !important; width: 160px !important; height: 160px !important; display: flex !important; align-items: center !important; justify-content: center !important; }
             .evolved-img { width: 100% !important; height: 100% !important; object-fit: contain !important; filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.5)) !important; }
 
-            .evolution-stats { margin-bottom: 3.5rem !important; }
-            .stage-badges { display: flex !important; align-items: center !important; justify-content: center !important; gap: 1.5rem !important; margin-bottom: 1.5rem !important; }
-            .badge { padding: 0.7rem 1.4rem !important; border-radius: 99px !important; font-weight: 800 !important; font-size: 1rem !important; }
+            .evolution-stats { margin-bottom: 2rem !important; }
+            .stage-badges { display: flex !important; align-items: center !important; justify-content: center !important; gap: 1rem !important; margin-bottom: 1rem !important; }
+            .badge { padding: 0.5rem 1rem !important; border-radius: 99px !important; font-weight: 800 !important; font-size: 0.85rem !important; }
             .badge.old { background: #f1f5f9 !important; color: #94a3b8 !important; text-decoration: line-through !important; }
             .badge.new { background: ${themeColor}22 !important; color: ${themeColor} !important; box-shadow: 0 0 25px ${themeColor}66 !important; border: 2px solid ${themeColor}44 !important; }
-            .arrow-line { color: #cbd5e1 !important; font-weight: 900 !important; font-size: 1.5rem !important; }
-            .congrats-text { font-size: 1.3rem !important; color: #1e293b !important; font-weight: 800 !important; }
+            .arrow-line { color: #cbd5e1 !important; font-weight: 900 !important; font-size: 1.2rem !important; }
+            .congrats-text { font-size: 1.1rem !important; color: #1e293b !important; font-weight: 800 !important; }
             .highlight { color: #ef4444 !important; }
 
             .confirm-btn {
               width: 100% !important;
-              padding: 1.4rem !important;
+              padding: 1rem !important;
               background: #1e293b !important;
               color: white !important;
               border: none !important;
-              border-radius: 28px !important;
+              border-radius: 20px !important;
               font-weight: 900 !important;
-              font-size: 1.3rem !important;
+              font-size: 1.1rem !important;
               cursor: pointer !important;
               transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-              box-shadow: 0 15px 30px rgba(0,0,0,0.2) !important;
+              box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
             }
             .confirm-btn:hover { background: #0f172a !important; transform: translateY(-4px) scale(1.02) !important; box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important; }
             .confirm-btn:active { transform: translateY(0) scale(0.98) !important; }

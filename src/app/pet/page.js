@@ -48,20 +48,28 @@ export default function PetPage() {
   const currentType = ALL_PET_TYPES.find(t => t.id === pet.typeId) || ALL_PET_TYPES[0];
   
   // Evolutionary image logic
-  const isEvolutionary = currentType.isEvolutionary || pet.typeId === 'corgi';
-  // Evolutionary or Gendered image logic
-  let petImage = currentType.image;
+  const isEvolutionary = currentType.isEvolutionary ?? true;
   
-  if (isEvolutionary) {
-    petImage = `/pets/${pet.typeId}_lv${pet.level || 1}.png`;
-  } else if (currentType.hasGender) {
+  // Adaptive image logic: resolve path based on evolution flag
+  let petImage = isEvolutionary 
+    ? `/pets/${pet.typeId}_lv${pet.level || 1}.png` 
+    : `/pets/${pet.typeId}.png`;
+
+  if (!isEvolutionary && currentType.hasGender) {
     const genderSuffix = pet.gender === 'female' ? 'female' : 'male';
     petImage = `/pets/${pet.typeId}_${genderSuffix}.png`;
   }
 
-  const heroGradient = pet.typeId === 'cyber_dragon'
-    ? 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)'
-    : 'linear-gradient(135deg, #22D3EE 0%, #34D399 100%)';
+  const elementGradients = {
+    '火': 'linear-gradient(135deg, #FCA5A5 0%, #EF4444 100%)',
+    '水': 'linear-gradient(135deg, #93C5FD 0%, #3B82F6 100%)',
+    '机械': 'linear-gradient(135deg, #CBD5E1 0%, #475569 100%)',
+    '自然': 'linear-gradient(135deg, #6EE7B7 0%, #10B981 100%)',
+    '光': 'linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%)',
+    '暗': 'linear-gradient(135deg, #A5B4FC 0%, #6366F1 100%)',
+    '电': 'linear-gradient(135deg, #FDE68A 0%, #EAB308 100%)',
+  };
+  const heroGradient = elementGradients[currentType.element] || 'linear-gradient(135deg, #A5F3FC 0%, #34D399 100%)';
 
   const stats = [
     { 
@@ -165,8 +173,8 @@ export default function PetPage() {
                     alt={currentType.name} 
                     className="hero-pet-image" 
                     onError={(e) => { 
-                      if (e.target.src !== window.location.origin + '/pets/corgi.png') {
-                        e.target.src = '/pets/corgi.png'; 
+                      if (e.target.src !== window.location.origin + '/pets/fire_dragon_lv1.png') {
+                        e.target.src = '/pets/fire_dragon_lv1.png'; 
                       }
                     }}
                   />
@@ -256,23 +264,25 @@ export default function PetPage() {
             </div>
             
             <div className="pets-vertical-list">
-              {ALL_PET_TYPES.map(type => {
-                const isActive = pet.typeId === type.id;
-                const isUnlocked = myPets.includes(type.id) || isActive;
+                {ALL_PET_TYPES.map(type => {
+                  const isActive = pet.typeId === type.id;
+                  const isUnlocked = myPets.includes(type.id) || isActive;
+                  const isTypeEvolutionary = type.isEvolutionary ?? true;
+                  const previewImg = isTypeEvolutionary ? `/pets/${type.id}_lv3.png` : `/pets/${type.id}.png`;
 
-                return (
-                  <div key={type.id} className={`pet-list-item ${isActive ? 'active' : ''} ${!isUnlocked ? 'locked-item' : ''}`}>
-                    <div className="item-avatar-box">
-                      <img 
-                        src={type.hasGender ? `/pets/${type.id}_male.png` : (type.image || '/pets/corgi.png')} 
-                        alt={type.name} 
-                        className={`item-pet-img ${!isUnlocked ? 'gray-avatar' : ''}`} 
-                        onError={(e) => { 
-                          if (e.target.src !== window.location.origin + '/pets/corgi.png') {
-                            e.target.src = '/pets/corgi.png'; 
-                          }
-                        }}
-                      />
+                  return (
+                    <div key={type.id} className={`pet-list-item ${isActive ? 'active' : ''} ${!isUnlocked ? 'locked-item' : ''}`}>
+                      <div className="item-avatar-box">
+                        <img 
+                          src={previewImg} 
+                          alt={type.name} 
+                          className={`item-pet-img ${!isUnlocked ? 'gray-avatar' : ''}`} 
+                          onError={(e) => { 
+                            if (e.target.src !== window.location.origin + '/pets/fire_dragon_lv1.png') {
+                              e.target.src = '/pets/fire_dragon_lv1.png'; 
+                            }
+                          }}
+                        />
                       {!isUnlocked && (
                         <div className="lock-overlay"><Lock size={12} strokeWidth={3} color="white" /></div>
                       )}
@@ -449,8 +459,8 @@ export default function PetPage() {
         .pet-list-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid #f1f5f9; }
         .pet-list-item:last-child { border-bottom: none; padding-bottom: 0; }
 
-        .item-avatar-box { position: relative; width: 64px; height: 64px; border-radius: 16px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden; flex-shrink: 0; }
-        .item-pet-img { width: 100%; height: 100%; object-fit: cover; }
+        .item-avatar-box { position: relative; width: 64px; height: 64px; border-radius: 16px; background: rgba(0,0,0,0.02); box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden; flex-shrink: 0; }
+        .item-pet-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
         .gray-avatar { filter: grayscale(1) brightness(0.9); }
         .lock-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
 

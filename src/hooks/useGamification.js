@@ -14,20 +14,20 @@ export function PetProvider({ children }) {
   
   const initialPet = (typeId) => ({
     name: '我的小宠',
-    typeId: typeId || 'corgi',
+    typeId: typeId || 'fire_dragon',
     level: 1,
     intimacy: 0,
     fullness: 80,
     cleanliness: 90,
     mood: 85,
-    isActive: typeId === 'corgi'
+    isActive: typeId === 'fire_dragon'
   });
 
   // 1. Synchronous state initialization from localStorage to avoid ANY flickering
   // We use a simplified version because user.id might not be ready on first mount
   const [pets, setPets] = useState([]);
-  const [activeTypeId, setActiveTypeId] = useState('corgi');
-  const [myPets, setMyPets] = useState(['corgi']); 
+  const [activeTypeId, setActiveTypeId] = useState('fire_dragon');
+  const [myPets, setMyPets] = useState(['fire_dragon']); 
   const [isInitialized, setIsInitialized] = useState(false);
   const [evolutionEvent, setEvolutionEvent] = useState(null);
   const prevLevelRef = React.useRef(null);
@@ -73,7 +73,7 @@ export function PetProvider({ children }) {
           const data = await res.json();
           
           let dbPets = data.pets || [];
-          let dbMyPets = data.unlockedPets || ['corgi'];
+          let dbMyPets = data.unlockedPets || ['fire_dragon'];
 
           if (dbPets.length === 0) {
             // Migration logic if needed

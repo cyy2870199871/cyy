@@ -1,0 +1,14 @@
+{
+  "appId": "com.genuine.muffin.daka",
+  "appName": "小打卡",
+  "webDir": "public",
+  "server": {
+    "url": "https://genuine-muffin-9941bc.netlify.app/",
+    "allowNavigation": [
+      "genuine-muffin-9941bc.netlify.app"
+    ]
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

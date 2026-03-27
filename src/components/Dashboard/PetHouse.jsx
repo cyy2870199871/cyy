@@ -12,14 +12,15 @@ export default function PetHouse() {
   const currentType = ALL_PET_TYPES.find(t => t.id === pet.typeId) || ALL_PET_TYPES[0];
   
   // Evolutionary image logic (Dynamic for corgi and cyber_dragon)
-  const isEvolutionary = currentType.isEvolutionary || pet.typeId === 'corgi';
-  // Evolutionary or Gendered image logic
-  let petImage = currentType.image;
+  const isEvolutionary = currentType.isEvolutionary ?? true;
   
-  if (isEvolutionary) {
-    petImage = `/pets/${pet.typeId}_lv${pet.level || 1}.png`;
-  } else if (currentType.hasGender) {
-    // Determine suffix based on gender (default to male if missing)
+  // Adaptive image logic: Use evolution path if it is an evolutionary pet, otherwise base asset
+  let petImage = isEvolutionary 
+    ? `/pets/${pet.typeId}_lv${pet.level || 1}.png` 
+    : `/pets/${pet.typeId}.png`;
+  
+  // Final fallback to fire_dragon if still missing (checked by onError later)
+  if (!isEvolutionary && currentType.hasGender) {
     const genderSuffix = pet.gender === 'female' ? 'female' : 'male';
     petImage = `/pets/${pet.typeId}_${genderSuffix}.png`;
   }
@@ -62,8 +63,8 @@ export default function PetHouse() {
                 alt={currentType.name} 
                 className="pet-img-main" 
                 onError={(e) => { 
-                  if (e.target.src !== window.location.origin + '/pets/corgi.png') {
-                    e.target.src = '/pets/corgi.png'; 
+                  if (e.target.src !== window.location.origin + '/pets/fire_dragon_lv1.png') {
+                    e.target.src = '/pets/fire_dragon_lv1.png'; 
                   }
                 }}
               />
@@ -147,12 +148,16 @@ export default function PetHouse() {
           align-items: center;
           justify-content: center;
           z-index: 2;
+          background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+          border-radius: 50%;
         }
         .pet-img-main { 
           width: 100%; 
           height: 100%; 
           object-fit: contain; 
           pointer-events: none;
+          mix-blend-mode: multiply;
+          filter: drop-shadow(0 5px 15px rgba(0,0,0,0.08));
         }
 
         .pet-stats-section { 
