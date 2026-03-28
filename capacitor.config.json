@@ -3,9 +3,9 @@
   "appName": "小打卡",
   "webDir": "public",
   "server": {
-    "url": "https://genuine-muffin-9941bc.netlify.app/",
+    "url": "https://spontaneous-daifuku-14c056.netlify.app/",
     "allowNavigation": [
-      "genuine-muffin-9941bc.netlify.app"
+      "spontaneous-daifuku-14c056.netlify.app"
     ]
   },
   "android": {

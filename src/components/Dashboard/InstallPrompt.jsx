@@ -38,7 +38,7 @@ export default function InstallPrompt() {
  
   const handleInstallClick = async () => {
     if (platform === 'android') {
-      window.location.href = 'https://genuine-muffin-9941bc.netlify.app/app-release.apk';
+      window.location.href = 'https://spontaneous-daifuku-14c056.netlify.app/app-release.apk';
       setVisible(false);
       return;
     }
