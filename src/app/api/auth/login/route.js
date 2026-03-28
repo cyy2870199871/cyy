@@ -64,6 +64,10 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error('Login error:', error);
-    return NextResponse.json({ error: '内部服务器错误' }, { status: 500 });
+    return NextResponse.json({ 
+      error: '内部服务器错误', 
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+    }, { status: 500 });
   }
 }

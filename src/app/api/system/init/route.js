@@ -51,6 +51,10 @@ export async function GET(request) {
     });
   } catch (error) {
     console.error('System init error:', error);
-    return NextResponse.json({ error: '系统初始化失败' }, { status: 500 });
+    return NextResponse.json({ 
+      error: '系统初始化失败',
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+    }, { status: 500 });
   }
 }
