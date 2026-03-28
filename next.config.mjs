@@ -9,7 +9,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  serverExternalPackages: ["@prisma/client"],
+  serverExternalPackages: [],
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.cache = false;
