@@ -1,4 +1,7 @@
-export const ALL_PET_TYPES = [
+const fs = require('fs');
+const path = require('path');
+
+const pets = [
   { id: 'fire_dragon', name: '炽焰兽', element: '火', gender: 'male', rarity: 'common', cost: 0, desc: '性格热血的火之幼龙，梦想是成为劫火龙皇。', isEvolutionary: true },
   { id: 'water_jellyfish', name: '珍珠水母', element: '水', gender: 'female', rarity: 'common', cost: 100, desc: '优雅安静的水之精灵，进阶后会成为深海皇后。', isEvolutionary: true },
   { id: 'cyber_bee', name: '发条工蜂', element: '机械', gender: 'male', rarity: 'common', cost: 150, desc: '勤劳的赛博昆虫，体内蕴含无限能源。', isEvolutionary: true },
@@ -17,6 +20,19 @@ export const ALL_PET_TYPES = [
   { id: 'alch_rabbit', name: '烧瓶兔耳', element: '炼金', gender: 'female', rarity: 'rare', cost: 550, desc: '精通药水制作的兔耳少女，经常炸掉实验室。', isEvolutionary: true },
   { id: 'paper_dragon', name: '折纸飞龙', element: '纸艺', gender: 'male', rarity: 'common', cost: 150, desc: '由特殊数码宣纸折叠而成，怕水但飞行极快。', isEvolutionary: true },
   { id: 'lucky_fish', name: '锦鲤福娃', element: '节日', gender: 'female', rarity: 'mythic', cost: 5000, desc: '代表好运的终极锦鲤，能带给全家人幸福。', isEvolutionary: true },
-  { id: 'cyber_dragon', name: '虹光机械龙', element: '机械', gender: 'male', rarity: 'epic', cost: 1200, desc: '由最尖端的赛博核心驱动，鳞片在极速飞行时会映射出霓虹色彩。', isEvolutionary: true },
-  { id: 'astral_axolotl', name: '星空蝾螈', element: '空间', gender: 'female', rarity: 'legendary', cost: 2500, desc: '来自璀璨星河的奇异生物，能操纵微型黑洞，拥有治愈灵魂的歌声。', isEvolutionary: true },
 ];
+
+const petsDir = path.join('e:', 'daka2', 'public', 'pets');
+const missing = [];
+
+pets.forEach(pet => {
+  for (let lv = 1; lv <= 5; lv++) {
+    const fileName = `${pet.id}_lv${lv}.png`;
+    const filePath = path.join(petsDir, fileName);
+    if (!fs.existsSync(filePath)) {
+      missing.push(fileName);
+    }
+  }
+});
+
+console.log('Missing images:', missing);
