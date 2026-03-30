@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "postbuild": "find .next/standalone/node_modules/.prisma/client/ -name \"libquery_engine-*\" ! -name \"*rhel-openssl-3.0.x*\" -delete || true"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.0",
@@ -17,7 +18,6 @@
     "bcryptjs": "^3.0.3",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^12.38.0",
-    "jimp": "^0.16.13",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.577.0",
     "next": "16.2.1",
@@ -29,6 +29,7 @@
   "devDependencies": {
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
+    "jimp": "^0.16.13",
     "prisma": "^6.19.2"
   }
 }
