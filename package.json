@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
-    "postbuild": "find .next/standalone/node_modules/.prisma/client/ -name \"libquery_engine-*\" ! -name \"*rhel-openssl-3.0.x*\" -delete || true"
+    "postbuild": "rm -rf .next/standalone/public .next/standalone/src/generated/client/query_engine-windows.dll.node || true"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.0",
