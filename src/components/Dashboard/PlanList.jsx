@@ -64,7 +64,7 @@ export default function PlanList() {
       <div className="list-header">
         <h3>我的计划</h3>
         <div className="header-actions">
-          <button className="share-btn"><Share2 size={16} /> 分享</button>
+          {/*<button className="share-btn"><Share2 size={16} /> 分享</button>*/}
         </div>
       </div>
 
@@ -87,7 +87,7 @@ export default function PlanList() {
               >
                 {/* Left color bar */}
                 <div className="card-color-bar" style={{ background: config.gradient }} />
-                
+
                 {/* Content Container */}
                 <div className="card-main-row">
                   {/* Category icon block */}
@@ -113,7 +113,7 @@ export default function PlanList() {
                   {/* Action buttons */}
                   <div className="card-actions">
                     {plan.completed ? (
-                      <button 
+                      <button
                         className="action-btn done-btn"
                         onClick={(e) => handleQuickComplete(e, plan)}
                       >
@@ -122,14 +122,14 @@ export default function PlanList() {
                       </button>
                     ) : (
                       <>
-                        <button 
+                        <button
                           className="action-btn complete-btn"
                           onClick={(e) => handleQuickComplete(e, plan)}
                         >
                           <CheckCircle2 size={16} />
                           <span>快速完成</span>
                         </button>
-                        <button 
+                        <button
                           className="action-btn timer-btn"
                           onClick={(e) => handleStartTimer(e, plan)}
                         >
