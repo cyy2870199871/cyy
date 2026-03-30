@@ -38,6 +38,16 @@ export default function RootLayout({ children }) {
                   navigator.serviceWorker.register('/sw.js');
                 });
               }
+              // Hide EdgeOne watermark
+              document.addEventListener('DOMContentLoaded', () => {
+                const hideWatermark = () => {
+                  const watermark = document.getElementById('edgeone-watermark');
+                  if (watermark) watermark.style.display = 'none';
+                };
+                hideWatermark();
+                const observer = new MutationObserver(hideWatermark);
+                observer.observe(document.documentElement, { childList: true, subtree: true });
+              });
             `,
           }}
         />
