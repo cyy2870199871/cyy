@@ -18,9 +18,17 @@ const petSchema = z.object({
 
 const updatePetSchema = petSchema.partial().omit({ userId: true, typeId: true });
 
-// Helper to sanitize Raw SQL results (convert BigInt to Number)
-const sanitizeResult = (data) => {
-  return JSON.parse(JSON.stringify(data, (_, v) => typeof v === 'bigint' ? Number(v) : v));
+// Helper to sanitize BigInt to Number for JSON responses
+const sanitize = (val) => {
+  if (val === null || val === undefined) return val;
+  if (typeof val === 'bigint') return Number(val);
+  if (Array.isArray(val)) return val.map(sanitize);
+  if (typeof val === 'object') {
+    const obj = {};
+    for (const k in val) obj[k] = sanitize(val[k]);
+    return obj;
+  }
+  return val;
 };
 
 export async function GET(request) {
@@ -32,29 +40,33 @@ export async function GET(request) {
       return NextResponse.json({ error: '缺少 userId' }, { status: 400 });
     }
 
-    const rawPets = await prisma.$queryRaw`SELECT * FROM pets WHERE userId = ${userId}`;
-    const pets = sanitizeResult(rawPets);
+    // Single round-trip to fetch user and their pets
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        pets: true
+      }
+    });
 
-    const decayedPets = Array.isArray(pets) ? pets.map(pet => {
+    if (!user) {
+      return NextResponse.json({ pets: [], unlockedPets: ['corgi'] });
+    }
+
+    const decayedPets = user.pets.map(pet => {
       const lastInt = pet.lastInteraction ? new Date(pet.lastInteraction) : new Date();
       const hoursElapsed = (new Date() - lastInt) / (1000 * 60 * 60);
       return {
         ...pet,
-        isActive: pet.isActive === 1 || pet.isActive === true,
+        isActive: !!pet.isActive,
         fullness: Math.max(0, (pet.fullness || 80) - Math.floor(hoursElapsed * 5)),
         cleanliness: Math.max(0, (pet.cleanliness || 90) - Math.floor(hoursElapsed * 3)),
         mood: Math.max(0, (pet.mood || 85) - Math.floor(hoursElapsed * 2)),
       };
-    }) : [];
-    
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { unlockedPets: true }
     });
-
+    
     return NextResponse.json({ 
-      pets: decayedPets, 
-      unlockedPets: user?.unlockedPets ? JSON.parse(user.unlockedPets) : ['corgi'] 
+      pets: sanitize(decayedPets), 
+      unlockedPets: user.unlockedPets ? JSON.parse(user.unlockedPets) : ['corgi'] 
     });
   } catch (error) {
     console.error('Fetch pets error:', error);
@@ -71,30 +83,57 @@ export async function POST(request) {
     const data = validation.data;
     const now = new Date();
 
-    // Use sequential execution instead of transaction to avoid "Transaction not found" timeouts
-    if (data.isActive) {
-      await prisma.$executeRaw`UPDATE pets SET isActive = 0 WHERE userId = ${data.userId}`;
-    }
+    // Use a transaction to ensure atomic execution in one trip
+    const result = await prisma.$transaction(async (tx) => {
+      if (data.isActive) {
+        await tx.pet.updateMany({
+          where: { userId: data.userId },
+          data: { isActive: false }
+        });
+      }
 
-    const randomId = 'p-' + crypto.randomBytes(4).toString('hex');
-    await prisma.$executeRaw`
-      INSERT INTO pets (id, name, typeId, level, intimacy, fullness, cleanliness, mood, isActive, userId, lastInteraction)
-      VALUES (${randomId}, ${data.name}, ${data.typeId}, ${data.level}, ${data.intimacy}, ${data.fullness}, ${data.cleanliness}, ${data.mood}, ${data.isActive ? 1 : 0}, ${data.userId}, ${now})
-      ON DUPLICATE KEY UPDATE
-        name = ${data.name}, level = ${data.level}, intimacy = ${data.intimacy}, 
-        fullness = ${data.fullness}, cleanliness = ${data.cleanliness}, mood = ${data.mood},
-        isActive = ${data.isActive ? 1 : 0}, lastInteraction = ${now}
-    `;
-
-    if (data.unlockedPets) {
-      await prisma.user.update({
-        where: { id: data.userId },
-        data: { unlockedPets: JSON.stringify(data.unlockedPets) }
+      const randomId = 'p-' + crypto.randomBytes(4).toString('hex');
+      
+      const pet = await tx.pet.upsert({
+        where: { 
+          userId_typeId: { userId: data.userId, typeId: data.typeId } 
+        },
+        update: {
+          name: data.name,
+          level: data.level,
+          intimacy: data.intimacy,
+          fullness: data.fullness,
+          cleanliness: data.cleanliness,
+          mood: data.mood,
+          isActive: data.isActive,
+          lastInteraction: now
+        },
+        create: {
+          id: randomId,
+          name: data.name,
+          typeId: data.typeId,
+          level: data.level,
+          intimacy: data.intimacy,
+          fullness: data.fullness,
+          cleanliness: data.cleanliness,
+          mood: data.mood,
+          isActive: data.isActive,
+          userId: data.userId,
+          lastInteraction: now
+        }
       });
-    }
 
-    const saved = await prisma.$queryRaw`SELECT * FROM pets WHERE userId = ${data.userId} AND typeId = ${data.typeId} LIMIT 1`;
-    return NextResponse.json(sanitizeResult(saved[0] || { ...data, isActive: !!data.isActive }));
+      if (data.unlockedPets) {
+        await tx.user.update({
+          where: { id: data.userId },
+          data: { unlockedPets: JSON.stringify(data.unlockedPets) }
+        });
+      }
+
+      return pet;
+    });
+
+    return NextResponse.json(sanitize(result));
 
   } catch (error) {
     console.error('POST Error:', error);
@@ -112,24 +151,30 @@ export async function PUT(request) {
     if (!userId || !typeId) return NextResponse.json({ error: '缺少参数' }, { status: 400 });
     const now = new Date();
     
-    await prisma.$executeRaw`
-      UPDATE pets 
-      SET 
-        name = ${body.name || '我的小宠'}, level = ${body.level || 1}, intimacy = ${body.intimacy || 0},
-        fullness = ${body.fullness || 80}, cleanliness = ${body.cleanliness || 90}, mood = ${body.mood || 85},
-        lastInteraction = ${now}
-      WHERE userId = ${userId} AND typeId = ${typeId}
-    `;
-
-    if (body.unlockedPets) {
-      await prisma.user.update({
-        where: { id: userId },
-        data: { unlockedPets: JSON.stringify(body.unlockedPets) }
+    const result = await prisma.$transaction(async (tx) => {
+      const pet = await tx.pet.update({
+        where: { userId_typeId: { userId, typeId } },
+        data: {
+          name: body.name,
+          level: body.level,
+          intimacy: body.intimacy,
+          fullness: body.fullness,
+          cleanliness: body.cleanliness,
+          mood: body.mood,
+          lastInteraction: now
+        }
       });
-    }
 
-    const updated = await prisma.$queryRaw`SELECT * FROM pets WHERE userId = ${userId} AND typeId = ${typeId} LIMIT 1`;
-    return NextResponse.json(sanitizeResult(updated[0]));
+      if (body.unlockedPets) {
+        await tx.user.update({
+          where: { id: userId },
+          data: { unlockedPets: JSON.stringify(body.unlockedPets) }
+        });
+      }
+      return pet;
+    });
+
+    return NextResponse.json(sanitize(result));
   } catch (error) {
     console.error('PUT Error:', error);
     return NextResponse.json({ error: '更新失败', details: error.message }, { status: 500 });
