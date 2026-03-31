@@ -5,7 +5,7 @@ import StatsGrid from "@/components/Dashboard/StatsGrid";
 import QuickActions from "@/components/Dashboard/QuickActions";
 import MainTabs from "@/components/Dashboard/MainTabs";
 import PetHouse from "@/components/Dashboard/PetHouse";
-import InstallPrompt from "@/components/Dashboard/InstallPrompt";
+import AddtoHomeScreenGuide from "@/components/UI/AddtoHomeScreenGuide";
 import CheckInHeatmap from "@/components/Dashboard/CheckInHeatmap";
 
 export default function DashboardPage() {
@@ -27,7 +27,7 @@ export default function DashboardPage() {
         <MainTabs />
       </div>
 
-      <InstallPrompt />
+      <AddtoHomeScreenGuide />
 
       <style jsx>{`
         .dashboard-container {

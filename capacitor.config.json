@@ -3,9 +3,9 @@
   "appName": "小打卡",
   "webDir": "public",
   "server": {
-    "url": "https://spontaneous-daifuku-14c056.netlify.app/",
+    "url": "https://dfgfdg.siw22.cn/",
     "allowNavigation": [
-      "spontaneous-daifuku-14c056.netlify.app"
+      "dfgfdg.siw22.cn"
     ]
   },
   "android": {
